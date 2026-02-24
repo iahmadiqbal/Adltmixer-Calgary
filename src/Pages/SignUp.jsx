@@ -1,6 +1,8 @@
 import React, { useState } from "react";
+import { motion } from "framer-motion";
 import { Eye, EyeOff } from "lucide-react";
-import { Link, Links } from "react-router-dom";
+import { Link } from "react-router-dom";
+
 const SignUp = () => {
   const [formData, setFormData] = useState({
     name: "",
@@ -41,22 +43,47 @@ const SignUp = () => {
 
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-gray-50 px-4 py-25">
-      <div className="w-full max-w-md bg-white rounded-3xl shadow-xl p-8">
-        <h2 className="text-3xl font-bold text-center text-pink-600 mb-2">
+      <motion.div 
+        className="w-full max-w-md bg-white rounded-3xl shadow-xl p-8"
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+      >
+        <motion.h2 
+          className="text-3xl font-bold text-center text-pink-600 mb-2"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.2 }}
+        >
           Create Account
-        </h2>
+        </motion.h2>
 
-        <p className="text-center text-gray-600 mb-6">
+        <motion.p 
+          className="text-center text-gray-600 mb-6"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.3 }}
+        >
           Join Adultmixer Calgary today ❤️
-        </p>
+        </motion.p>
 
         {error && (
-          <p className="bg-red-100 text-red-600 text-sm p-3 rounded-lg mb-4 text-center">
+          <motion.p 
+            className="bg-red-100 text-red-600 text-sm p-3 rounded-lg mb-4 text-center"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+          >
             {error}
-          </p>
+          </motion.p>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-5">
+        <motion.form 
+          onSubmit={handleSubmit} 
+          className="space-y-5"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.4 }}
+        >
           {/* Full Name */}
           <div>
             <label className="block text-gray-700 font-semibold mb-1">
@@ -126,21 +153,28 @@ const SignUp = () => {
           </div>
 
           {/* Submit */}
-          <button
+          <motion.button
             type="submit"
             className="w-full py-3 bg-pink-600 text-white text-lg font-bold rounded-xl hover:bg-pink-700 transition"
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
           >
             Sign Up
-          </button>
-        </form>
+          </motion.button>
+        </motion.form>
 
-        <p className="text-center text-sm text-gray-600 mt-6">
+        <motion.p 
+          className="text-center text-sm text-gray-600 mt-6"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.5 }}
+        >
           Already have an account?{" "}
           <Link to="/login" className="text-pink-600 font-semibold cursor-pointer">
             Login
           </Link>
-        </p>
-      </div>
+        </motion.p>
+      </motion.div>
     </div>
   );
 };
