@@ -36,6 +36,9 @@ const Navbar = () => {
           <NavLink to="/matches" className={linkClass}>
             Matches
           </NavLink>
+          <NavLink to="/pricing" className={linkClass}>
+            Pricing
+          </NavLink>
           <NavLink to="/contact" className={linkClass}>
             Contact
           </NavLink>
@@ -109,6 +112,20 @@ const Navbar = () => {
             }
           >
             Matches
+          </NavLink>
+
+          <NavLink
+            to="/pricing"
+            onClick={() => setOpen(false)}
+            className={({ isActive }) =>
+              `block w-full px-3 py-2 rounded-lg ${
+                isActive
+                  ? "text-pink-600 font-semibold"
+                  : "text-gray-700 hover:text-pink-600"
+              }`
+            }
+          >
+            Pricing
           </NavLink>
 
           <NavLink
