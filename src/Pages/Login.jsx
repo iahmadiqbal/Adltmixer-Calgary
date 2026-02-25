@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { Eye, EyeOff } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
+import toast, { Toaster } from "react-hot-toast";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -22,15 +23,55 @@ const Login = () => {
 
     if (!formData.email || !formData.password) {
       setError("All fields are required");
+      toast.error("Please fill in all fields", {
+        duration: 3000,
+        position: "top-center",
+        style: {
+          background: "#FEF2F2",
+          color: "#DC2626",
+          fontWeight: "500",
+          borderRadius: "10px",
+          padding: "12px 20px",
+          boxShadow: "0 4px 12px rgba(220, 38, 38, 0.15)",
+        },
+        iconTheme: {
+          primary: "#DC2626",
+          secondary: "#FEF2F2",
+        },
+      });
       return;
     }
 
     setError("");
     console.log("Login Data:", formData);
+
+    // Show professional success toast
+    toast.success("Login successful! Redirecting...", {
+      duration: 2000,
+      position: "top-center",
+      style: {
+        background: "#F0FDF4",
+        color: "#16A34A",
+        fontWeight: "500",
+        borderRadius: "10px",
+        padding: "12px 20px",
+        boxShadow: "0 4px 12px rgba(22, 163, 74, 0.15)",
+      },
+      iconTheme: {
+        primary: "#16A34A",
+        secondary: "#F0FDF4",
+      },
+    });
+
+    // Smooth redirect to Explore page
+    setTimeout(() => {
+      navigate("/explore");
+    }, 2000);
   };
 
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-gray-50 px-4 py-25">
+      <Toaster />
       <motion.div
         className="w-full max-w-md bg-white rounded-3xl shadow-xl p-8"
         initial={{ opacity: 0, y: 30 }}

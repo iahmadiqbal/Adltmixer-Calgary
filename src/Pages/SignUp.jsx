@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { Eye, EyeOff, User, Mail, Calendar, Lock, Heart } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
+import toast, { Toaster } from "react-hot-toast";
 
 const SignUp = () => {
   const navigate = useNavigate();
@@ -29,29 +30,85 @@ const SignUp = () => {
       !formData.age
     ) {
       setError("All fields are required");
+      toast.error("Please fill in all fields", {
+        duration: 3000,
+        position: "top-center",
+        style: {
+          background: "#FEF2F2",
+          color: "#DC2626",
+          fontWeight: "500",
+          borderRadius: "10px",
+          padding: "12px 20px",
+          boxShadow: "0 4px 12px rgba(220, 38, 38, 0.15)",
+        },
+        iconTheme: {
+          primary: "#DC2626",
+          secondary: "#FEF2F2",
+        },
+      });
       return;
     }
 
     if (Number(formData.age) < 18) {
       setError("You must be 18+ to sign up");
+      toast.error("You must be 18 or older to sign up", {
+        duration: 3000,
+        position: "top-center",
+        style: {
+          background: "#FEF2F2",
+          color: "#DC2626",
+          fontWeight: "500",
+          borderRadius: "10px",
+          padding: "12px 20px",
+          boxShadow: "0 4px 12px rgba(220, 38, 38, 0.15)",
+        },
+        iconTheme: {
+          primary: "#DC2626",
+          secondary: "#FEF2F2",
+        },
+      });
       return;
     }
 
     setError("");
     console.log("Signup Data:", formData);
+
+    // Show professional success toast
+    toast.success("Account created! Welcome to Adultmixer 💕", {
+      duration: 2000,
+      position: "top-center",
+      style: {
+        background: "#F0FDF4",
+        color: "#16A34A",
+        fontWeight: "500",
+        borderRadius: "10px",
+        padding: "12px 20px",
+        boxShadow: "0 4px 12px rgba(22, 163, 74, 0.15)",
+      },
+      iconTheme: {
+        primary: "#16A34A",
+        secondary: "#F0FDF4",
+      },
+    });
+
+    // Smooth redirect to Explore page
+    setTimeout(() => {
+      navigate("/explore");
+    }, 2000);
   };
 
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-br from-pink-100 via-purple-50 to-pink-50 px-4 py-20">
-      
-      <motion.div 
+      <Toaster />
+
+      <motion.div
         className="w-full max-w-lg bg-white/90 backdrop-blur-sm rounded-3xl shadow-2xl p-8 md:p-10 border border-pink-100"
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.7, type: "spring" }}
       >
         {/* Header with Icon */}
-        <motion.div 
+        <motion.div
           className="text-center mb-8"
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -69,7 +126,7 @@ const SignUp = () => {
         </motion.div>
 
         {error && (
-          <motion.div 
+          <motion.div
             className="bg-red-50 border border-red-200 text-red-700 text-sm p-4 rounded-xl mb-6 text-center flex items-center justify-center gap-2"
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -79,8 +136,8 @@ const SignUp = () => {
           </motion.div>
         )}
 
-        <motion.form 
-          onSubmit={handleSubmit} 
+        <motion.form
+          onSubmit={handleSubmit}
           className="space-y-5"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -92,7 +149,10 @@ const SignUp = () => {
               Full Name
             </label>
             <div className="relative">
-              <User className="absolute left-4 top-3.5 text-gray-400" size={20} />
+              <User
+                className="absolute left-4 top-3.5 text-gray-400"
+                size={20}
+              />
               <input
                 type="text"
                 name="name"
@@ -110,7 +170,10 @@ const SignUp = () => {
               Email Address
             </label>
             <div className="relative">
-              <Mail className="absolute left-4 top-3.5 text-gray-400" size={20} />
+              <Mail
+                className="absolute left-4 top-3.5 text-gray-400"
+                size={20}
+              />
               <input
                 type="email"
                 name="email"
@@ -128,7 +191,10 @@ const SignUp = () => {
               Age (18+ only)
             </label>
             <div className="relative">
-              <Calendar className="absolute left-4 top-3.5 text-gray-400" size={20} />
+              <Calendar
+                className="absolute left-4 top-3.5 text-gray-400"
+                size={20}
+              />
               <input
                 type="number"
                 name="age"
@@ -148,7 +214,10 @@ const SignUp = () => {
               Password
             </label>
             <div className="relative">
-              <Lock className="absolute left-4 top-3.5 text-gray-400" size={20} />
+              <Lock
+                className="absolute left-4 top-3.5 text-gray-400"
+                size={20}
+              />
               <input
                 type={showPassword ? "text" : "password"}
                 name="password"
@@ -178,7 +247,7 @@ const SignUp = () => {
         </motion.form>
 
         {/* Footer */}
-        <motion.div 
+        <motion.div
           className="text-center mt-6"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -186,11 +255,14 @@ const SignUp = () => {
         >
           <p className="text-sm text-gray-600">
             Already have an account?{" "}
-            <Link to="/login" className="text-pink-600 font-semibold hover:text-pink-700 transition">
+            <Link
+              to="/login"
+              className="text-pink-600 font-semibold hover:text-pink-700 transition"
+            >
               Login here
             </Link>
           </p>
-          
+
           <p className="text-xs text-gray-500 mt-4">
             By signing up, you agree to our Terms & Privacy Policy
           </p>
