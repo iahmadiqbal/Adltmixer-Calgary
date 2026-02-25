@@ -15,12 +15,13 @@ const HeroSection = () => {
 
       {/* ================= HERO SECTION ================= */}
       <section className="bg-gradient-to-r from-pink-600 to-rose-500 text-white pt-28 pb-20">
-        <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-12 items-center">
+        <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-8 items-center">
           
           <motion.div
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8 }}
+            className="md:pr-8"
           >
             <motion.h1 
               className="text-4xl md:text-5xl font-bold leading-tight"
@@ -70,16 +71,19 @@ const HeroSection = () => {
           </motion.div>
 
           <motion.div 
-            className="hidden md:block"
+            className="flex justify-center items-center mt-8 md:mt-0"
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, delay: 0.3 }}
           >
-            <img
-              src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1"
-              alt="Dating"
-              className="rounded-3xl shadow-2xl object-cover h-[420px] w-full"
-            />
+            <div className="relative w-full max-w-xl">
+              <img
+                src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1"
+                alt="Dating"
+                className="rounded-3xl shadow-2xl object-cover object-center w-full h-[320px] md:h-[420px]"
+                style={{ objectPosition: 'center 30%' }}
+              />
+            </div>
           </motion.div>
         </div>
       </section>
