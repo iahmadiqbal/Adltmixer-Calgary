@@ -39,7 +39,7 @@ const Login = () => {
 
     setError("");
     console.log("Login Data:", formData);
-    
+
     // Show success toast
     toast.success("Login Successful! Redirecting...", {
       duration: 2000,
@@ -63,13 +63,13 @@ const Login = () => {
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-gray-50 px-4 py-25">
       <Toaster />
-      <motion.div 
+      <motion.div
         className="w-full max-w-md bg-white rounded-3xl shadow-xl p-8"
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
       >
-        <motion.h2 
+        <motion.h2
           className="text-3xl font-bold text-center text-pink-600 mb-2"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -77,7 +77,7 @@ const Login = () => {
         >
           Welcome Back
         </motion.h2>
-        <motion.p 
+        <motion.p
           className="text-center text-gray-600 mb-6"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -87,7 +87,7 @@ const Login = () => {
         </motion.p>
 
         {error && (
-          <motion.p 
+          <motion.p
             className="bg-red-100 text-red-600 text-sm p-3 rounded-lg mb-4 text-center"
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -96,8 +96,8 @@ const Login = () => {
           </motion.p>
         )}
 
-        <motion.form 
-          onSubmit={handleSubmit} 
+        <motion.form
+          onSubmit={handleSubmit}
           className="space-y-5"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -149,7 +149,7 @@ const Login = () => {
           </motion.button>
         </motion.form>
 
-        <motion.p 
+        <motion.p
           className="text-center text-sm text-gray-600 mt-6"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
