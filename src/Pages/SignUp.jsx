@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { Eye, EyeOff, User, Mail, Calendar, Lock, Heart } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
-import toast, { Toaster } from "react-hot-toast";
 
 const SignUp = () => {
   const navigate = useNavigate();
@@ -30,62 +29,20 @@ const SignUp = () => {
       !formData.age
     ) {
       setError("All fields are required");
-      toast.error("All fields are required", {
-        duration: 3000,
-        position: "top-center",
-        style: {
-          background: "#FEE2E2",
-          color: "#DC2626",
-          fontWeight: "600",
-          borderRadius: "12px",
-          padding: "16px",
-        },
-      });
       return;
     }
 
     if (Number(formData.age) < 18) {
       setError("You must be 18+ to sign up");
-      toast.error("You must be 18+ to sign up", {
-        duration: 3000,
-        position: "top-center",
-        style: {
-          background: "#FEE2E2",
-          color: "#DC2626",
-          fontWeight: "600",
-          borderRadius: "12px",
-          padding: "16px",
-        },
-      });
       return;
     }
 
     setError("");
     console.log("Signup Data:", formData);
-    
-    // Show success toast with professional message
-    toast.success("Welcome to Adultmixer! Let's find your match 💕", {
-      duration: 2000,
-      position: "top-center",
-      icon: "🎉",
-      style: {
-        background: "#DCFCE7",
-        color: "#16A34A",
-        fontWeight: "600",
-        borderRadius: "12px",
-        padding: "16px",
-      },
-    });
-
-    // Auto-redirect to Explore page after 2 seconds
-    setTimeout(() => {
-      navigate("/explore");
-    }, 2000);
   };
 
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-br from-pink-100 via-purple-50 to-pink-50 px-4 py-20">
-      <Toaster />
       
       <motion.div 
         className="w-full max-w-lg bg-white/90 backdrop-blur-sm rounded-3xl shadow-2xl p-8 md:p-10 border border-pink-100"
