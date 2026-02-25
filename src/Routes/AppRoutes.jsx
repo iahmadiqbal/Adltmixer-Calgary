@@ -10,6 +10,8 @@ import Login from "../Pages/Login";
 import Profile from "../Pages/Profile";
 import Chat from "../Pages/Chat";
 import TopToScroll from "../Pages/TopToScroll";
+import PrivacyPolicy from "../Pages/PrivacyPolicy";
+import TermsOfService from "../Pages/TermsOfService";
 
 const AppRoutes = () => {
   return (
@@ -25,6 +27,8 @@ const AppRoutes = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/profile/:id" element={<Profile />} />
         <Route path="/chat/:id" element={<Chat />} />
+        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+        <Route path="/terms-of-service" element={<TermsOfService />} />
       </Routes>
     </>
   );
