@@ -127,7 +127,9 @@ const Pricing = () => {
                     <span className="text-4xl md:text-5xl font-bold text-gray-900">
                       {plan.price}
                     </span>
-                    <p className="text-gray-500 mt-1 md:mt-2 text-sm md:text-base">{plan.period}</p>
+                    <p className="text-gray-500 mt-1 md:mt-2 text-sm md:text-base">
+                      {plan.period}
+                    </p>
                   </motion.div>
                 </div>
 
@@ -152,7 +154,9 @@ const Pricing = () => {
                         )}
                         <span
                           className={`text-xs md:text-sm ${
-                            feature.included ? "text-gray-700 font-medium" : "text-gray-400"
+                            feature.included
+                              ? "text-gray-700 font-medium"
+                              : "text-gray-400"
                           }`}
                         >
                           {feature.text}

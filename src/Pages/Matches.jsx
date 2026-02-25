@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import profiles from "../data/profiles";
 
@@ -12,19 +13,39 @@ const Matches = () => {
 
   return (
     <div className="min-h-screen pt-28 px-4 bg-gradient-to-b from-pink-50 to-white">
-      <h1 className="text-4xl font-bold text-center text-pink-600 mb-6">
+      <motion.h1 
+        className="text-4xl font-bold text-center text-pink-600 mb-6"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+      >
         Your Matches ❤️
-      </h1>
+      </motion.h1>
 
-      <input
+      <motion.input
         className="block mx-auto mb-10 px-5 py-3 rounded-full border w-full max-w-md"
         placeholder="Search matches..."
         onChange={(e) => setSearch(e.target.value)}
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ delay: 0.2, duration: 0.5 }}
       />
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-6xl mx-auto">
-        {filtered.map(user => (
-          <div key={user.id} className="bg-white rounded-2xl shadow-lg overflow-hidden">
+      <motion.div 
+        className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-6xl mx-auto"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.3, duration: 0.6 }}
+      >
+        {filtered.map((user, index) => (
+          <motion.div 
+            key={user.id} 
+            className="bg-white rounded-2xl shadow-lg overflow-hidden"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 + index * 0.05, duration: 0.5 }}
+            whileHover={{ scale: 1.05, y: -5 }}
+          >
             <img src={user.img} className="h-48 w-full object-cover" />
 
             <div className="p-4 text-center">
@@ -38,23 +59,27 @@ const Matches = () => {
                 {user.status}
               </span>
 
-              <button
+              <motion.button
                 onClick={() => navigate(`/chat/${user.id}`)}
                 className="mt-3 w-full py-2 bg-pink-600 text-white rounded-xl"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
               >
                 Message 💬
-              </button>
+              </motion.button>
 
-              <button
+              <motion.button
                 onClick={() => navigate(`/profile/${user.id}`)}
                 className="mt-2 w-full py-2 border rounded-xl"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
               >
                 View Profile
-              </button>
+              </motion.button>
             </div>
-          </div>
+          </motion.div>
         ))}
-      </div>
+      </motion.div>
     </div>
   );
 };

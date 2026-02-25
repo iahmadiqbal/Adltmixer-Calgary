@@ -1,8 +1,11 @@
 import React, { useState } from "react";
+import { motion } from "framer-motion";
 import { Eye, EyeOff } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import toast, { Toaster } from "react-hot-toast";
 
 const Login = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -20,31 +23,86 @@ const Login = () => {
 
     if (!formData.email || !formData.password) {
       setError("All fields are required");
+      toast.error("All fields are required", {
+        duration: 3000,
+        position: "top-center",
+        style: {
+          background: "#FEE2E2",
+          color: "#DC2626",
+          fontWeight: "600",
+          borderRadius: "12px",
+          padding: "16px",
+        },
+      });
       return;
     }
 
     setError("");
     console.log("Login Data:", formData);
-    alert("Login Successful ✅");
+
+    // Show success toast
+    toast.success("Login Successful! Redirecting...", {
+      duration: 2000,
+      position: "top-center",
+      icon: "✅",
+      style: {
+        background: "#DCFCE7",
+        color: "#16A34A",
+        fontWeight: "600",
+        borderRadius: "12px",
+        padding: "16px",
+      },
+    });
+
+    // Auto-redirect to Explore page after 2 seconds
+    setTimeout(() => {
+      navigate("/explore");
+    }, 2000);
   };
 
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-gray-50 px-4 py-25">
-      <div className="w-full max-w-md bg-white rounded-3xl shadow-xl p-8">
-        <h2 className="text-3xl font-bold text-center text-pink-600 mb-2">
+      <Toaster />
+      <motion.div
+        className="w-full max-w-md bg-white rounded-3xl shadow-xl p-8"
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+      >
+        <motion.h2
+          className="text-3xl font-bold text-center text-pink-600 mb-2"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.2 }}
+        >
           Welcome Back
-        </h2>
-        <p className="text-center text-gray-600 mb-6">
+        </motion.h2>
+        <motion.p
+          className="text-center text-gray-600 mb-6"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.3 }}
+        >
           Login to Adultmixer Calgary ❤️
-        </p>
+        </motion.p>
 
         {error && (
-          <p className="bg-red-100 text-red-600 text-sm p-3 rounded-lg mb-4 text-center">
+          <motion.p
+            className="bg-red-100 text-red-600 text-sm p-3 rounded-lg mb-4 text-center"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+          >
             {error}
-          </p>
+          </motion.p>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-5">
+        <motion.form
+          onSubmit={handleSubmit}
+          className="space-y-5"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.4 }}
+        >
           <div>
             <label className="block text-gray-700 font-semibold mb-1">
               Email Address
@@ -81,23 +139,28 @@ const Login = () => {
             </div>
           </div>
 
-         
-
-          <button
+          <motion.button
             type="submit"
             className="w-full py-3 bg-pink-600 text-white text-lg font-bold rounded-xl hover:bg-pink-700 transition"
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
           >
             Login
-          </button>
-        </form>
+          </motion.button>
+        </motion.form>
 
-        <p className="text-center text-sm text-gray-600 mt-6">
-          Don’t have an account?{" "}
+        <motion.p
+          className="text-center text-sm text-gray-600 mt-6"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.5 }}
+        >
+          Don't have an account?{" "}
           <Link to="/signup" className="text-pink-600 font-semibold">
             Sign Up
           </Link>
-        </p>
-      </div>
+        </motion.p>
+      </motion.div>
     </div>
   );
 };
