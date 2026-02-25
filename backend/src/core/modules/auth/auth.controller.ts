@@ -16,7 +16,10 @@ export class AuthController {
   static login = asyncHandler(async (req: Request, res: Response) => {
     const validated = loginSchema.parse(req.body);
 
-    const result = await AuthService.login(validated.email, validated.password);
+    const result = await AuthService.login(
+      validated.email,
+      validated.password
+    );
 
     res.status(200).json(result);
   });
@@ -26,6 +29,9 @@ export class AuthController {
       throw new AppError("Unauthorized", 401);
     }
 
-    res.status(200).json({ user: req.user });
+    res.status(200).json({
+      userId: req.user.userId,
+      role: req.user.role,
+    });
   });
 }
