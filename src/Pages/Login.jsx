@@ -70,7 +70,7 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-gray-50 px-4 py-25">
+    <div className="min-h-screen w-full flex items-center justify-center bg-gray-50 px-4 py-28">
       <Toaster />
       <motion.div
         className="w-full max-w-md bg-white rounded-3xl shadow-xl p-8"
@@ -113,7 +113,7 @@ const Login = () => {
           transition={{ delay: 0.4 }}
         >
           <div>
-            <label className="block text-gray-700 font-semibold mb-1">
+            <label className="block text-gray-700 font-semibold mb-2">
               Email Address
             </label>
             <input
@@ -122,12 +122,12 @@ const Login = () => {
               placeholder="Enter your email"
               value={formData.email}
               onChange={handleChange}
-              className="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-pink-500 outline-none"
+              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-pink-600 focus:border-transparent outline-none transition"
             />
           </div>
 
           <div>
-            <label className="block text-gray-700 font-semibold mb-1">
+            <label className="block text-gray-700 font-semibold mb-2">
               Password
             </label>
             <div className="relative">
@@ -137,11 +137,11 @@ const Login = () => {
                 placeholder="Enter your password"
                 value={formData.password}
                 onChange={handleChange}
-                className="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-pink-500 outline-none"
+                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-pink-600 focus:border-transparent outline-none transition"
               />
               <span
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-4 top-3.5 cursor-pointer text-gray-500"
+                className="absolute right-4 top-3.5 cursor-pointer text-gray-500 hover:text-gray-700 transition"
               >
                 {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
               </span>
@@ -165,7 +165,7 @@ const Login = () => {
           transition={{ delay: 0.5 }}
         >
           Don't have an account?{" "}
-          <Link to="/signup" className="text-pink-600 font-semibold">
+          <Link to="/signup" className="text-pink-600 font-semibold hover:text-pink-700 transition">
             Sign Up
           </Link>
         </motion.p>
