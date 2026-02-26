@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Check, X, Sparkles, Heart, Crown, Zap, Shield, Star } from "lucide-react";
+import { Check, X, Award, Heart, Crown, Zap, Shield, Star } from "lucide-react";
 
 const Pricing = () => {
   const [billingCycle, setBillingCycle] = useState("monthly");
@@ -31,7 +31,7 @@ const Pricing = () => {
     },
     {
       name: "Premium",
-      icon: Sparkles,
+      icon: Award,
       tagline: "Most popular choice",
       price: billingCycle === "monthly" ? "$5.99" : "$59.99",
       originalPrice: billingCycle === "monthly" ? "" : "$71.88",
@@ -137,7 +137,7 @@ const Pricing = () => {
             transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
             className="inline-flex items-center gap-2 bg-gradient-to-r from-pink-500 to-purple-500 text-white px-4 py-2 rounded-full text-sm font-semibold mb-6 shadow-lg"
           >
-            <Sparkles className="w-4 h-4" />
+            <Star className="w-4 h-4 fill-white" />
             <span>Special Launch Offer - Save up to 20%</span>
           </motion.div>
           
