@@ -15,7 +15,7 @@ const HeroSection = () => {
 
       {/* ================= HERO SECTION ================= */}
       <section className="bg-gradient-to-r from-pink-600 to-rose-500 text-white pt-28 pb-20">
-        <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-8 items-center">
+        <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-4 md:gap-6 items-center">
           
           <motion.div
             initial={{ opacity: 0, x: -50 }}
@@ -71,7 +71,7 @@ const HeroSection = () => {
           </motion.div>
 
           <motion.div 
-            className="flex justify-center items-center mt-8 md:mt-0"
+            className="flex justify-center items-center mt-12 md:mt-8"
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, delay: 0.3 }}
