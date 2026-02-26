@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import logo from "../assets/logo/logo4Navbar.png";
+import logo from "../assets/logo/Adultmixer (2).png";
 
 const Footer = () => {
   const scrollToTop = () => {
@@ -14,17 +14,17 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
           {/* Brand Section with Logo */}
           <div className="lg:col-span-2">
-            <div className="flex items-center gap-3 mb-4">
+            <div className="flex items-center gap-2.5 mb-5">
               <img
                 src={logo}
                 alt="AdultMixer Logo"
-                className="h-16 md:h-18 w-auto object-contain"
+                className="h-14 md:h-16 w-auto object-contain drop-shadow-lg"
               />
-              <h2 className="text-2xl font-bold text-pink-600">
+              <h2 className="text-xl md:text-2xl font-bold text-pink-500 leading-tight">
                 Adultmixer <span className="text-white">Calgary</span>
               </h2>
             </div>
-            <p className="text-base text-gray-400 max-w-md leading-relaxed mb-6">
+            <p className="text-sm md:text-base text-gray-300 max-w-md leading-relaxed mb-6">
               A modern platform to connect, meet, and explore meaningful
               relationships. Join our community and discover your perfect match
               today.
@@ -199,11 +199,11 @@ const Footer = () => {
       <div className="border-t border-gray-800">
         <div className="max-w-7xl mx-auto px-6 py-5">
           <div className="flex flex-col md:flex-row justify-between items-center gap-3">
-            <p className="text-base text-gray-500">
+            <p className="text-base text-gray-300">
               © {new Date().getFullYear()} Adultmixer Calgary. All Rights
               Reserved.
             </p>
-            <p className="text-base text-gray-500">
+            <p className="text-base text-gray-300">
               Made with <span className="text-pink-600">♥</span> in Calgary
             </p>
           </div>
