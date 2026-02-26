@@ -48,7 +48,7 @@ const Navbar = () => {
         <div className="hidden md:flex space-x-4">
           <Link
             to="/login"
-            className="px-5 py-2 rounded-xl bg-gray-200 hover:bg-gray-300 transition"
+            className="px-5 py-2 rounded-xl bg-gradient-to-r from-pink-500 to-purple-600 text-white hover:from-pink-600 hover:to-purple-700 transition"
           >
             Login
           </Link>
@@ -145,7 +145,7 @@ const Navbar = () => {
           <Link
             to="/login"
             onClick={() => setOpen(false)}
-            className="block w-full text-center px-4 py-2 mt-2 rounded-xl bg-gray-200 hover:bg-gray-300 transition"
+            className="block w-full text-center px-4 py-2 mt-2 rounded-xl bg-gradient-to-r from-pink-500 to-purple-600 text-white hover:from-pink-600 hover:to-purple-700 transition"
           >
             Login
           </Link>
