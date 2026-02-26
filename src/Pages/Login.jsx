@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, Mail, Lock, Heart } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast";
 
@@ -70,39 +70,42 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-gray-50 px-4 py-28">
+    <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-br from-pink-100 via-purple-50 to-pink-50 px-4 py-28">
       <Toaster />
+
       <motion.div
-        className="w-full max-w-md bg-white rounded-3xl shadow-xl p-8"
-        initial={{ opacity: 0, y: 30 }}
+        className="w-full max-w-lg bg-white/90 backdrop-blur-sm rounded-3xl shadow-2xl p-8 md:p-10 border border-pink-100"
+        initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
+        transition={{ duration: 0.7, type: "spring" }}
       >
-        <motion.h2
-          className="text-3xl font-bold text-center text-pink-600 mb-2"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.2 }}
+        {/* Header with Icon */}
+        <motion.div
+          className="text-center mb-8"
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.2, duration: 0.5 }}
         >
-          Welcome Back
-        </motion.h2>
-        <motion.p
-          className="text-center text-gray-600 mb-6"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.3 }}
-        >
-          Login to Adultmixer Calgary ❤️
-        </motion.p>
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full mb-4">
+            <Heart className="text-white" size={32} fill="white" />
+          </div>
+          <h2 className="text-4xl font-bold bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent mb-2">
+            Welcome Back
+          </h2>
+          <p className="text-gray-600 text-sm">
+            Login to Adultmixer Calgary ❤️
+          </p>
+        </motion.div>
 
         {error && (
-          <motion.p
-            className="bg-red-100 text-red-600 text-sm p-3 rounded-lg mb-4 text-center"
+          <motion.div
+            className="bg-red-50 border border-red-200 text-red-700 text-sm p-4 rounded-xl mb-6 text-center flex items-center justify-center gap-2"
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
           >
-            {error}
-          </motion.p>
+            <span>⚠️</span>
+            <span>{error}</span>
+          </motion.div>
         )}
 
         <motion.form
@@ -112,45 +115,58 @@ const Login = () => {
           animate={{ opacity: 1 }}
           transition={{ delay: 0.4 }}
         >
+          {/* Email */}
           <div>
-            <label className="block text-gray-700 font-semibold mb-2">
+            <label className="block text-gray-700 font-semibold mb-2 text-sm">
               Email Address
             </label>
-            <input
-              type="email"
-              name="email"
-              placeholder="Enter your email"
-              value={formData.email}
-              onChange={handleChange}
-              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-pink-600 focus:border-transparent outline-none transition"
-            />
+            <div className="relative">
+              <Mail
+                className="absolute left-4 top-3.5 text-gray-400"
+                size={20}
+              />
+              <input
+                type="email"
+                name="email"
+                placeholder="your.email@example.com"
+                value={formData.email}
+                onChange={handleChange}
+                className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-pink-600 focus:border-transparent outline-none transition"
+              />
+            </div>
           </div>
 
+          {/* Password */}
           <div>
-            <label className="block text-gray-700 font-semibold mb-2">
+            <label className="block text-gray-700 font-semibold mb-2 text-sm">
               Password
             </label>
             <div className="relative">
+              <Lock
+                className="absolute left-4 top-3.5 text-gray-400"
+                size={20}
+              />
               <input
                 type={showPassword ? "text" : "password"}
                 name="password"
                 placeholder="Enter your password"
                 value={formData.password}
                 onChange={handleChange}
-                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-pink-600 focus:border-transparent outline-none transition"
+                className="w-full pl-12 pr-12 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-pink-600 focus:border-transparent outline-none transition"
               />
               <span
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-4 top-3.5 cursor-pointer text-gray-500 hover:text-gray-700 transition"
+                className="absolute right-4 top-3.5 cursor-pointer text-gray-500 hover:text-pink-600 transition"
               >
                 {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
               </span>
             </div>
           </div>
 
+          {/* Submit Button */}
           <motion.button
             type="submit"
-            className="w-full py-3 bg-pink-600 text-white text-lg font-bold rounded-xl hover:bg-pink-700 transition"
+            className="w-full py-4 bg-gradient-to-r from-pink-600 to-purple-600 text-white text-lg font-bold rounded-xl hover:from-pink-700 hover:to-purple-700 transition shadow-lg hover:shadow-xl"
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
           >
@@ -158,17 +174,23 @@ const Login = () => {
           </motion.button>
         </motion.form>
 
-        <motion.p
-          className="text-center text-sm text-gray-600 mt-6"
+        {/* Footer */}
+        <motion.div
+          className="text-center mt-6"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.5 }}
+          transition={{ delay: 0.6 }}
         >
-          Don't have an account?{" "}
-          <Link to="/signup" className="text-pink-600 font-semibold hover:text-pink-700 transition">
-            Sign Up
-          </Link>
-        </motion.p>
+          <p className="text-sm text-gray-600">
+            Don't have an account?{" "}
+            <Link
+              to="/signup"
+              className="text-pink-600 font-semibold hover:text-pink-700 transition"
+            >
+              Sign Up
+            </Link>
+          </p>
+        </motion.div>
       </motion.div>
     </div>
   );
