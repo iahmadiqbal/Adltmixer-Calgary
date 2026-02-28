@@ -48,8 +48,40 @@ model User {
   createdAt       DateTime    @default(now())
   updatedAt       DateTime    @updatedAt
 
+  givenLikes      Like[]      @relation("GivenLikes")
+  receivedLikes   Like[]      @relation("ReceivedLikes")
+  matchesAsUser1  Match[]     @relation("MatchUser1")
+  matchesAsUser2  Match[]     @relation("MatchUser2")
+
   @@index([email])
   @@index([gender])
   @@index([preference])
   @@index([deletedAt])
+}
+
+model Like {
+  id         String   @id @default(uuid())
+  fromUserId String
+  toUserId   String
+  createdAt  DateTime @default(now())
+
+  fromUser User @relation("GivenLikes", fields: [fromUserId], references: [id], onDelete: Cascade)
+  toUser   User @relation("ReceivedLikes", fields: [toUserId], references: [id], onDelete: Cascade)
+
+  @@unique([fromUserId, toUserId])
+  @@index([toUserId])
+}
+
+model Match {
+  id        String   @id @default(uuid())
+  user1Id   String
+  user2Id   String
+  createdAt DateTime @default(now())
+
+  user1 User @relation("MatchUser1", fields: [user1Id], references: [id], onDelete: Cascade)
+  user2 User @relation("MatchUser2", fields: [user2Id], references: [id], onDelete: Cascade)
+
+  @@unique([user1Id, user2Id])
+  @@index([user1Id])
+  @@index([user2Id])
 }
