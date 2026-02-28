@@ -52,6 +52,7 @@ model User {
   receivedLikes   Like[]      @relation("ReceivedLikes")
   matchesAsUser1  Match[]     @relation("MatchUser1")
   matchesAsUser2  Match[]     @relation("MatchUser2")
+  sentMessages    Message[]   @relation("SentMessages")
 
   @@index([email])
   @@index([gender])
@@ -78,10 +79,26 @@ model Match {
   user2Id   String
   createdAt DateTime @default(now())
 
-  user1 User @relation("MatchUser1", fields: [user1Id], references: [id], onDelete: Cascade)
-  user2 User @relation("MatchUser2", fields: [user2Id], references: [id], onDelete: Cascade)
+  user1    User      @relation("MatchUser1", fields: [user1Id], references: [id], onDelete: Cascade)
+  user2    User      @relation("MatchUser2", fields: [user2Id], references: [id], onDelete: Cascade)
+  messages Message[] @relation("MatchMessages")
 
   @@unique([user1Id, user2Id])
   @@index([user1Id])
   @@index([user2Id])
+}
+
+model Message {
+  id        String   @id @default(uuid())
+  matchId   String
+  senderId  String
+  content   String
+  createdAt DateTime @default(now())
+
+  match  Match @relation("MatchMessages", fields: [matchId], references: [id], onDelete: Cascade)
+  sender User  @relation("SentMessages", fields: [senderId], references: [id], onDelete: Cascade)
+
+  @@index([matchId])
+  @@index([senderId])
+  @@index([createdAt])
 }
