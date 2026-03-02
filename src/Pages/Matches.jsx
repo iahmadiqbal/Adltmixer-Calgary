@@ -78,15 +78,13 @@ const Matches = () => {
         transition={{ duration: 0.6 }}
       >
         <motion.div
-          className="inline-flex items-center gap-2 mb-4"
+          className="mb-4"
           animate={{ scale: [1, 1.05, 1] }}
           transition={{ duration: 2, repeat: Infinity }}
         >
-          <Sparkles className="text-pink-500" size={32} />
           <h1 className="text-5xl md:text-6xl font-extrabold bg-gradient-to-r from-pink-600 via-purple-600 to-blue-600 bg-clip-text text-transparent">
             Your Matches
           </h1>
-          <Heart className="text-pink-500 fill-pink-500" size={32} />
         </motion.div>
         <p className="text-gray-600 text-lg">Discover amazing connections waiting for you</p>
       </motion.div>
@@ -106,13 +104,6 @@ const Matches = () => {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
-          <motion.div 
-            className="absolute right-3 top-1/2 transform -translate-y-1/2"
-            animate={{ rotate: 360 }}
-            transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-          >
-            <Sparkles className="text-purple-500" size={20} />
-          </motion.div>
         </div>
       </motion.div>
 
