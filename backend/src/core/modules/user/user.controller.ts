@@ -46,4 +46,14 @@ export class UserController {
 
     res.status(200).json(updatedUser);
   });
+
+  static getMatches = asyncHandler(async (req: Request, res: Response) => {
+    if (!req.user) {
+      throw new AppError("Unauthorized", 401);
+    }
+
+    const matches = await UserService.getMatches(req.user.userId);
+
+    res.status(200).json(matches);
+  });
 }

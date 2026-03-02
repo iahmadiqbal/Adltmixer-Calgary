@@ -111,4 +111,57 @@ export class UserService {
 
     return users;
   }
+
+  static async getMatches(userId: string) {
+    try {
+      const matches = await prisma.match.findMany({
+        where: {
+          OR: [{ user1Id: userId }, { user2Id: userId }],
+        },
+        include: {
+          user1: {
+            select: {
+              id: true,
+              firstName: true,
+              lastName: true,
+              bio: true,
+              gender: true,
+              profileImageUrl: true,
+              birthDate: true,
+              isOnline: true,
+              createdAt: true,
+            },
+          },
+          user2: {
+            select: {
+              id: true,
+              firstName: true,
+              lastName: true,
+              bio: true,
+              gender: true,
+              profileImageUrl: true,
+              birthDate: true,
+              isOnline: true,
+              createdAt: true,
+            },
+          },
+        },
+        orderBy: { createdAt: "desc" },
+      });
+
+      const formattedMatches = matches.map((match) => {
+        const otherUser = match.user1Id === userId ? match.user2 : match.user1;
+        return {
+          matchId: match.id,
+          matchedAt: match.createdAt,
+          user: otherUser,
+        };
+      });
+
+      return formattedMatches;
+    } catch (error) {
+      console.error("Error fetching matches:", error);
+      return [];
+    }
+  }
 }
