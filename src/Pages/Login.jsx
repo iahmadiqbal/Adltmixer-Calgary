@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { Eye, EyeOff } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast";
+import api from "../services/api";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -18,7 +19,7 @@ const Login = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!formData.email || !formData.password) {
@@ -38,26 +39,48 @@ const Login = () => {
     }
 
     setError("");
-    console.log("Login Data:", formData);
 
-    // Show success toast
-    toast.success("Login Successful! Redirecting...", {
-      duration: 2000,
-      position: "top-center",
-      icon: "✅",
-      style: {
-        background: "#DCFCE7",
-        color: "#16A34A",
-        fontWeight: "600",
-        borderRadius: "12px",
-        padding: "16px",
-      },
-    });
+    try {
+      const response = await api.post("/auth/login", {
+        email: formData.email,
+        password: formData.password,
+      });
 
-    // Auto-redirect to Explore page after 2 seconds
-    setTimeout(() => {
-      navigate("/explore");
-    }, 2000);
+      localStorage.setItem("token", response.data.token);
+      localStorage.setItem("user", JSON.stringify(response.data.user));
+
+      toast.success("Login Successful! Redirecting...", {
+        duration: 2000,
+        position: "top-center",
+        icon: "✅",
+        style: {
+          background: "#DCFCE7",
+          color: "#16A34A",
+          fontWeight: "600",
+          borderRadius: "12px",
+          padding: "16px",
+        },
+      });
+
+      setTimeout(() => {
+        navigate("/explore");
+      }, 2000);
+    } catch (error) {
+      const errorMessage =
+        error.response?.data?.message || "Login failed. Please try again.";
+      setError(errorMessage);
+      toast.error(errorMessage, {
+        duration: 3000,
+        position: "top-center",
+        style: {
+          background: "#FEE2E2",
+          color: "#DC2626",
+          fontWeight: "600",
+          borderRadius: "12px",
+          padding: "16px",
+        },
+      });
+    }
   };
 
   return (

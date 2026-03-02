@@ -1,19 +1,45 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import profiles from "../data/profiles";
+import api from "../services/api";
 
 const Matches = () => {
   const [search, setSearch] = useState("");
+  const [matches, setMatches] = useState([]);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  const filtered = profiles.filter(p =>
-    p.name.toLowerCase().includes(search.toLowerCase())
+  useEffect(() => {
+    const fetchMatches = async () => {
+      try {
+        const response = await api.get("/users/matches");
+        setMatches(response.data);
+      } catch (error) {
+        console.error("Failed to fetch matches:", error);
+        alert("Failed to load matches. Please try again.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchMatches();
+  }, []);
+
+  const filtered = matches.filter((p) =>
+    p.name?.toLowerCase().includes(search.toLowerCase()),
   );
+
+  if (loading) {
+    return (
+      <div className="min-h-screen pt-28 px-4 bg-gradient-to-b from-pink-50 to-white flex items-center justify-center">
+        <p className="text-gray-600">Loading matches...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen pt-28 px-4 bg-gradient-to-b from-pink-50 to-white">
-      <motion.h1 
+      <motion.h1
         className="text-4xl font-bold text-center text-pink-600 mb-6"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -31,15 +57,15 @@ const Matches = () => {
         transition={{ delay: 0.2, duration: 0.5 }}
       />
 
-      <motion.div 
+      <motion.div
         className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-6xl mx-auto"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.3, duration: 0.6 }}
       >
         {filtered.map((user, index) => (
-          <motion.div 
-            key={user.id} 
+          <motion.div
+            key={user.id}
             className="bg-white rounded-2xl shadow-lg overflow-hidden"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
@@ -53,9 +79,13 @@ const Matches = () => {
                 {user.name}, {user.age}
               </h2>
 
-              <span className={`text-xs px-3 py-1 rounded-full ${
-                user.status === "Online" ? "bg-green-500 text-white" : "bg-gray-400 text-white"
-              }`}>
+              <span
+                className={`text-xs px-3 py-1 rounded-full ${
+                  user.status === "Online"
+                    ? "bg-green-500 text-white"
+                    : "bg-gray-400 text-white"
+                }`}
+              >
                 {user.status}
               </span>
 

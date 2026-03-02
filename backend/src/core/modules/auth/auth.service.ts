@@ -3,6 +3,7 @@ import jwt, { SignOptions } from "jsonwebtoken";
 import { prisma } from "../../../config/prisma";
 import { env } from "../../../config/env";
 import { Role, Gender, Preference } from "@prisma/client";
+import { AppError } from "../../errors/AppError";
 
 interface RegisterInput {
   email: string;
@@ -22,7 +23,7 @@ export class AuthService {
     });
 
     if (existingUser) {
-      throw new Error("User already exists");
+      throw new AppError("User already exists", 400);
     }
 
     const hashedPassword = await bcrypt.hash(data.password, 12);
@@ -43,7 +44,7 @@ export class AuthService {
     const token = jwt.sign(
       { userId: user.id, role: user.role },
       env.JWT_SECRET,
-      { expiresIn: env.JWT_EXPIRES_IN } as SignOptions
+      { expiresIn: env.JWT_EXPIRES_IN } as SignOptions,
     );
 
     return {
@@ -72,19 +73,19 @@ export class AuthService {
     });
 
     if (!user || user.deletedAt) {
-      throw new Error("Invalid credentials");
+      throw new AppError("Invalid credentials", 401);
     }
 
     const isValid = await bcrypt.compare(password, user.password);
 
     if (!isValid) {
-      throw new Error("Invalid credentials");
+      throw new AppError("Invalid credentials", 401);
     }
 
     const token = jwt.sign(
       { userId: user.id, role: user.role },
       env.JWT_SECRET,
-      { expiresIn: env.JWT_EXPIRES_IN } as SignOptions
+      { expiresIn: env.JWT_EXPIRES_IN } as SignOptions,
     );
 
     return {

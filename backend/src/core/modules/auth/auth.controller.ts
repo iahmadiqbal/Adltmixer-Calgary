@@ -6,19 +6,33 @@ import { AppError } from "../../errors/AppError";
 
 export class AuthController {
   static register = asyncHandler(async (req: Request, res: Response) => {
-    const validated = registerSchema.parse(req.body);
+    const parsed = registerSchema.safeParse(req.body);
 
-    const result = await AuthService.register(validated);
+    if (!parsed.success) {
+      return res.status(400).json({
+        message: "Validation failed",
+        errors: parsed.error.errors,
+      });
+    }
+
+    const result = await AuthService.register(parsed.data);
 
     res.status(201).json(result);
   });
 
   static login = asyncHandler(async (req: Request, res: Response) => {
-    const validated = loginSchema.parse(req.body);
+    const parsed = loginSchema.safeParse(req.body);
+
+    if (!parsed.success) {
+      return res.status(400).json({
+        message: "Validation failed",
+        errors: parsed.error.errors,
+      });
+    }
 
     const result = await AuthService.login(
-      validated.email,
-      validated.password
+      parsed.data.email,
+      parsed.data.password,
     );
 
     res.status(200).json(result);

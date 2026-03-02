@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { Eye, EyeOff, User, Mail, Calendar, Lock, Heart } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast";
+import api from "../services/api";
 
 const SignUp = () => {
   const navigate = useNavigate();
@@ -11,6 +12,7 @@ const SignUp = () => {
     email: "",
     password: "",
     age: "",
+    gender: "",
   });
 
   const [showPassword, setShowPassword] = useState(false);
@@ -20,14 +22,15 @@ const SignUp = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (
       !formData.name ||
       !formData.email ||
       !formData.password ||
-      !formData.age
+      !formData.age ||
+      !formData.gender
     ) {
       setError("All fields are required");
       toast.error("All fields are required", {
@@ -61,40 +64,71 @@ const SignUp = () => {
     }
 
     setError("");
-    console.log("Signup Data:", formData);
-    
-    // Show success toast with professional message
-    toast.success("Welcome to Adultmixer! Let's find your match 💕", {
-      duration: 2000,
-      position: "top-center",
-      icon: "🎉",
-      style: {
-        background: "#DCFCE7",
-        color: "#16A34A",
-        fontWeight: "600",
-        borderRadius: "12px",
-        padding: "16px",
-      },
-    });
 
-    // Auto-redirect to Explore page after 2 seconds
-    setTimeout(() => {
-      navigate("/explore");
-    }, 2000);
+    try {
+      const firstName = formData.name.trim().split(" ")[0];
+      const currentYear = new Date().getFullYear();
+      const birthYear = currentYear - Number(formData.age);
+      const birthDate = `${birthYear}-01-01`;
+
+      const response = await api.post("/auth/register", {
+        firstName,
+        email: formData.email,
+        password: formData.password,
+        birthDate,
+        gender: formData.gender,
+      });
+
+      localStorage.setItem("token", response.data.token);
+      localStorage.setItem("user", JSON.stringify(response.data.user));
+
+      toast.success("Welcome to Adultmixer! Let's find your match 💕", {
+        duration: 2000,
+        position: "top-center",
+        icon: "🎉",
+        style: {
+          background: "#DCFCE7",
+          color: "#16A34A",
+          fontWeight: "600",
+          borderRadius: "12px",
+          padding: "16px",
+        },
+      });
+
+      setTimeout(() => {
+        navigate("/explore");
+      }, 2000);
+    } catch (error) {
+      const errorMessage =
+        error.response?.data?.message ||
+        "Registration failed. Please try again.";
+      setError(errorMessage);
+      toast.error(errorMessage, {
+        duration: 3000,
+        position: "top-center",
+        style: {
+          background: "#FEE2E2",
+          color: "#DC2626",
+          fontWeight: "600",
+          borderRadius: "12px",
+          padding: "16px",
+        },
+      });
+    }
   };
 
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-br from-pink-100 via-purple-50 to-pink-50 px-4 py-20">
       <Toaster />
-      
-      <motion.div 
+
+      <motion.div
         className="w-full max-w-lg bg-white/90 backdrop-blur-sm rounded-3xl shadow-2xl p-8 md:p-10 border border-pink-100"
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.7, type: "spring" }}
       >
         {/* Header with Icon */}
-        <motion.div 
+        <motion.div
           className="text-center mb-8"
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -112,7 +146,7 @@ const SignUp = () => {
         </motion.div>
 
         {error && (
-          <motion.div 
+          <motion.div
             className="bg-red-50 border border-red-200 text-red-700 text-sm p-4 rounded-xl mb-6 text-center flex items-center justify-center gap-2"
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -122,8 +156,8 @@ const SignUp = () => {
           </motion.div>
         )}
 
-        <motion.form 
-          onSubmit={handleSubmit} 
+        <motion.form
+          onSubmit={handleSubmit}
           className="space-y-5"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -135,7 +169,10 @@ const SignUp = () => {
               Full Name
             </label>
             <div className="relative">
-              <User className="absolute left-4 top-3.5 text-gray-400" size={20} />
+              <User
+                className="absolute left-4 top-3.5 text-gray-400"
+                size={20}
+              />
               <input
                 type="text"
                 name="name"
@@ -153,7 +190,10 @@ const SignUp = () => {
               Email Address
             </label>
             <div className="relative">
-              <Mail className="absolute left-4 top-3.5 text-gray-400" size={20} />
+              <Mail
+                className="absolute left-4 top-3.5 text-gray-400"
+                size={20}
+              />
               <input
                 type="email"
                 name="email"
@@ -171,7 +211,10 @@ const SignUp = () => {
               Age (18+ only)
             </label>
             <div className="relative">
-              <Calendar className="absolute left-4 top-3.5 text-gray-400" size={20} />
+              <Calendar
+                className="absolute left-4 top-3.5 text-gray-400"
+                size={20}
+              />
               <input
                 type="number"
                 name="age"
@@ -185,13 +228,39 @@ const SignUp = () => {
             </div>
           </div>
 
+          {/* Gender */}
+          <div>
+            <label className="block text-gray-700 font-semibold mb-2 text-sm">
+              Gender
+            </label>
+            <div className="relative">
+              <User
+                className="absolute left-4 top-3.5 text-gray-400"
+                size={20}
+              />
+              <select
+                name="gender"
+                value={formData.gender}
+                onChange={handleChange}
+                className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-pink-500 focus:border-transparent outline-none transition appearance-none bg-white"
+              >
+                <option value="">Select your gender</option>
+                <option value="MALE">Male</option>
+                <option value="FEMALE">Female</option>
+              </select>
+            </div>
+          </div>
+
           {/* Password */}
           <div>
             <label className="block text-gray-700 font-semibold mb-2 text-sm">
               Password
             </label>
             <div className="relative">
-              <Lock className="absolute left-4 top-3.5 text-gray-400" size={20} />
+              <Lock
+                className="absolute left-4 top-3.5 text-gray-400"
+                size={20}
+              />
               <input
                 type={showPassword ? "text" : "password"}
                 name="password"
@@ -221,7 +290,7 @@ const SignUp = () => {
         </motion.form>
 
         {/* Footer */}
-        <motion.div 
+        <motion.div
           className="text-center mt-6"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -229,11 +298,14 @@ const SignUp = () => {
         >
           <p className="text-sm text-gray-600">
             Already have an account?{" "}
-            <Link to="/login" className="text-pink-600 font-semibold hover:text-pink-700 transition">
+            <Link
+              to="/login"
+              className="text-pink-600 font-semibold hover:text-pink-700 transition"
+            >
               Login here
             </Link>
           </p>
-          
+
           <p className="text-xs text-gray-500 mt-4">
             By signing up, you agree to our Terms & Privacy Policy
           </p>
