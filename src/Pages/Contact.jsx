@@ -5,37 +5,65 @@ import { Mail, Phone, MapPin } from "lucide-react";
 const Contact = () => {
   return (
     <div className="w-full bg-gray-50">
-      {/* ================= HEADER ================= */}
-      <section className="bg-gradient-to-r text-pink-600 py-32">
-        <motion.div 
-          className="max-w-7xl mx-auto px-6 text-center"
+      {/* ================= HEADER WITH BACKGROUND IMAGE ================= */}
+      <section className="relative h-[600px] flex items-center justify-center overflow-hidden">
+        {/* Background Image with Overlay */}
+        <div className="absolute inset-0 z-0">
+          <img
+            src="https://images.unsplash.com/photo-1511895426328-dc8714191300?w=1920&q=80"
+            alt="Contact Us"
+            className="w-full h-full object-cover object-center"
+          />
+          {/* Dark Overlay for better text visibility */}
+          <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/50 to-black/60"></div>
+        </div>
+
+        {/* Content */}
+        <motion.div
+          className="relative z-10 text-center px-6"
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
         >
-          <motion.h1 
-            className="text-4xl md:text-5xl font-bold"
+          {/* Contact Us Badge */}
+          <motion.div
+            className="inline-block mb-6"
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.2, duration: 0.6 }}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            <span className="px-8 py-3 bg-white text-pink-600 font-bold text-sm rounded-full shadow-lg cursor-pointer hover:shadow-2xl transition-shadow duration-300">
+              CONTACT US
+            </span>
+          </motion.div>
+
+          {/* Main Heading */}
+          <motion.h1
+            className="text-5xl md:text-7xl font-bold text-white mb-4"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2, duration: 0.6 }}
-          >
-            Contact AdultMixer Calgary
-          </motion.h1>
-          <motion.p 
-            className="mt-6 text-lg text-gray-800 max-w-2xl mx-auto"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
             transition={{ delay: 0.4, duration: 0.6 }}
           >
-            We're here to help. Whether you have questions, feedback, or safety
-            concerns, our support team is available 24/7.
+            Let's Connect
+          </motion.h1>
+
+          {/* Subheading */}
+          <motion.p
+            className="text-xl md:text-2xl text-white/90"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.6, duration: 0.6 }}
+          >
+            We're here to help you find meaningful connections
           </motion.p>
         </motion.div>
       </section>
 
       {/* ================= INFO CARDS ================= */}
       <motion.section 
-        className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 px-6 -mt-16 mb-20"
+        className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 px-6 mt-16 mb-20"
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: 0.5 }}
