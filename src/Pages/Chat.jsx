@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useParams, useNavigate } from "react-router-dom";
 import { ArrowLeft, MoreVertical, Send, Smile, Image, Camera, X, Heart } from "lucide-react";
