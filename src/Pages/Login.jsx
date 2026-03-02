@@ -3,9 +3,11 @@ import { motion } from "framer-motion";
 import { Eye, EyeOff, Mail, Lock, Heart } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast";
+import { useAuth } from "../context/AuthContext";
 
 const Login = () => {
   const navigate = useNavigate();
+  const { login } = useAuth();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -13,6 +15,7 @@ const Login = () => {
 
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -43,30 +46,46 @@ const Login = () => {
     }
 
     setError("");
-    console.log("Login Data:", formData);
+    setIsLoading(true);
 
-    // Show professional success toast
-    toast.success("Login successful! Redirecting...", {
-      duration: 2000,
-      position: "top-center",
-      style: {
-        background: "#F0FDF4",
-        color: "#16A34A",
-        fontWeight: "500",
-        borderRadius: "10px",
-        padding: "12px 20px",
-        boxShadow: "0 4px 12px rgba(22, 163, 74, 0.15)",
-      },
-      iconTheme: {
-        primary: "#16A34A",
-        secondary: "#F0FDF4",
-      },
-    });
-
-    // Smooth redirect to Explore page
+    // Mock authentication
     setTimeout(() => {
-      navigate("/explore");
-    }, 2000);
+      const mockUser = {
+        id: "1",
+        email: formData.email,
+        firstName: "Ahmad",
+        lastName: "Khan",
+        bio: "Hello! I'm using AdultMixer Calgary",
+        profileImageUrl: "https://randomuser.me/api/portraits/men/32.jpg",
+      };
+
+      const mockToken = "mock-jwt-token-" + Date.now();
+
+      login(mockUser, mockToken);
+
+      toast.success("Login successful! Redirecting...", {
+        duration: 2000,
+        position: "top-center",
+        style: {
+          background: "#F0FDF4",
+          color: "#16A34A",
+          fontWeight: "500",
+          borderRadius: "10px",
+          padding: "12px 20px",
+          boxShadow: "0 4px 12px rgba(22, 163, 74, 0.15)",
+        },
+        iconTheme: {
+          primary: "#16A34A",
+          secondary: "#F0FDF4",
+        },
+      });
+
+      setTimeout(() => {
+        navigate("/explore");
+      }, 2000);
+
+      setIsLoading(false);
+    }, 1000);
   };
 
   return (
@@ -166,11 +185,12 @@ const Login = () => {
           {/* Submit Button */}
           <motion.button
             type="submit"
-            className="w-full py-4 bg-gradient-to-r from-pink-600 to-purple-600 text-white text-lg font-bold rounded-xl hover:from-pink-700 hover:to-purple-700 transition shadow-lg hover:shadow-xl"
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
+            disabled={isLoading}
+            className="w-full py-4 bg-gradient-to-r from-pink-600 to-purple-600 text-white text-lg font-bold rounded-xl hover:from-pink-700 hover:to-purple-700 transition shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
+            whileHover={{ scale: isLoading ? 1 : 1.02 }}
+            whileTap={{ scale: isLoading ? 1 : 0.98 }}
           >
-            Login
+            {isLoading ? "Logging in..." : "Login"}
           </motion.button>
         </motion.form>
 
