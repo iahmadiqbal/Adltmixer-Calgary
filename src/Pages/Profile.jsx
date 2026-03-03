@@ -1,38 +1,85 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { useParams, useNavigate } from "react-router-dom";
-import profiles from "../data/profiles";
+import api from "../services/api";
 
 const Profile = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const user = profiles.find((p) => p.id === Number(id));
 
-  const [liked, setLiked] = useState(false);
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [isEditing, setIsEditing] = useState(false);
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    bio: "",
+  });
 
-  // Load like status
   useEffect(() => {
-    const likes = JSON.parse(localStorage.getItem("likes")) || [];
-    setLiked(likes.includes(Number(id)));
+    const fetchProfile = async () => {
+      console.log("Fetching profile, id:", id);
+      setLoading(true);
+
+      try {
+        let response;
+        if (id) {
+          console.log("Fetching user by ID:", id);
+          response = await api.get(`/users/${id}`);
+        } else {
+          console.log("Fetching current user profile");
+          response = await api.get("/users/me/profile");
+        }
+
+        console.log("Profile response:", response.data);
+        setUser(response.data);
+
+        if (!id) {
+          setFormData({
+            firstName: response.data.firstName || "",
+            lastName: response.data.lastName || "",
+            bio: response.data.bio || "",
+          });
+        }
+      } catch (error) {
+        console.error("Failed to fetch profile:", error);
+        alert("Failed to load profile. Please try again.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProfile();
   }, [id]);
 
-  // Like / Unlike
-  const handleLike = () => {
-    let likes = JSON.parse(localStorage.getItem("likes")) || [];
-    if (likes.includes(Number(id))) {
-      likes = likes.filter((l) => l !== Number(id));
-      setLiked(false);
-    } else {
-      likes.push(Number(id));
-      setLiked(true);
-    }
-    localStorage.setItem("likes", JSON.stringify(likes));
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // Safety check
+  const handleSave = async () => {
+    try {
+      const response = await api.patch("/users/me/profile", formData);
+      console.log("Profile updated:", response.data);
+      setUser(response.data);
+      setIsEditing(false);
+      alert("Profile updated successfully!");
+    } catch (error) {
+      console.error("Failed to update profile:", error);
+      alert("Failed to update profile. Please try again.");
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen pt-28 px-4 bg-gradient-to-b from-pink-50 to-white flex items-center justify-center">
+        <p className="text-gray-600">Loading profile...</p>
+      </div>
+    );
+  }
+
   if (!user) {
     return (
-      <motion.div 
+      <motion.div
         className="min-h-screen flex items-center justify-center text-xl"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -42,96 +89,176 @@ const Profile = () => {
     );
   }
 
+  const isOwnProfile = !id;
+  const displayName = `${user.firstName} ${user.lastName || ""}`.trim();
+  const age = user.birthDate
+    ? new Date().getFullYear() - new Date(user.birthDate).getFullYear()
+    : null;
+  const imageUrl =
+    user.profileImageUrl && user.profileImageUrl.trim() !== ""
+      ? user.profileImageUrl
+      : "https://via.placeholder.com/400x400?text=Profile";
+
   return (
     <div className="min-h-screen pt-24 px-4 bg-pink-50">
-      <motion.div 
+      <motion.div
         className="max-w-md mx-auto bg-white rounded-3xl shadow-xl p-6 text-center relative"
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
       >
+        {user.isOnline !== undefined && (
+          <motion.span
+            className={`absolute top-4 right-4 px-3 py-1 text-xs rounded-full ${
+              user.isOnline
+                ? "bg-green-100 text-green-600"
+                : "bg-gray-200 text-gray-600"
+            }`}
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ delay: 0.3, type: "spring" }}
+          >
+            {user.isOnline ? "Online" : "Offline"}
+          </motion.span>
+        )}
 
-        {/* Status Badge */}
-        <motion.span
-          className={`absolute top-4 right-4 px-3 py-1 text-xs rounded-full ${
-            user.status === "Online"
-              ? "bg-green-100 text-green-600"
-              : "bg-gray-200 text-gray-600"
-          }`}
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          transition={{ delay: 0.3, type: "spring" }}
-        >
-          {user.status}
-        </motion.span>
-
-        {/* Profile Image */}
         <motion.img
-          src={user.img}
-          alt={user.name}
+          src={imageUrl}
+          alt={displayName}
           className="w-40 h-40 rounded-full mx-auto object-cover border-4 border-pink-200"
           initial={{ scale: 0, rotate: -180 }}
           animate={{ scale: 1, rotate: 0 }}
           transition={{ delay: 0.2, duration: 0.6, type: "spring" }}
+          onError={(e) => {
+            e.target.src = "https://via.placeholder.com/400x400?text=Profile";
+          }}
         />
 
-        {/* Name & Age */}
-        <motion.h1 
-          className="text-3xl font-bold mt-4"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-        >
-        <span className="text-pink-600">Name-</span>  {user.name} <br/> <span className="text-pink-600">Age-</span> {user.age}
-        </motion.h1>
+        {isOwnProfile && isEditing ? (
+          <motion.div
+            className="mt-4 space-y-3"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+          >
+            <input
+              type="text"
+              name="firstName"
+              value={formData.firstName}
+              onChange={handleChange}
+              placeholder="First Name"
+              className="w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-pink-500 outline-none"
+            />
+            <input
+              type="text"
+              name="lastName"
+              value={formData.lastName}
+              onChange={handleChange}
+              placeholder="Last Name"
+              className="w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-pink-500 outline-none"
+            />
+            <textarea
+              name="bio"
+              value={formData.bio}
+              onChange={handleChange}
+              placeholder="Bio"
+              rows="3"
+              className="w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-pink-500 outline-none"
+            />
+          </motion.div>
+        ) : (
+          <>
+            <motion.h1
+              className="text-3xl font-bold mt-4"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4 }}
+            >
+              <span className="text-pink-600">Name:</span> {displayName}
+              {age && (
+                <>
+                  <br />
+                  <span className="text-pink-600">Age:</span> {age}
+                </>
+              )}
+            </motion.h1>
 
-        {/* Bio */}
-        <motion.p 
-          className="text-pink-600 mt-4"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.5 }}
-        >
-          {user.bio}
-        </motion.p>
+            <motion.p
+              className="text-pink-600 mt-4"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.5 }}
+            >
+              {user.bio || "No bio available"}
+            </motion.p>
+          </>
+        )}
 
-        {/* Actions */}
-        <motion.div 
+        <motion.div
           className="mt-6 space-y-3"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.6 }}
         >
-          <motion.button
-            onClick={() => navigate(`/chat/${user.id}`)}
-            className="w-full py-3 bg-pink-600 text-white rounded-xl font-semibold hover:bg-pink-700 transition"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            Message 💬
-          </motion.button>
+          {isOwnProfile ? (
+            <>
+              {isEditing ? (
+                <>
+                  <motion.button
+                    onClick={handleSave}
+                    className="w-full py-3 bg-pink-600 text-white rounded-xl font-semibold hover:bg-pink-700 transition"
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    Save Changes
+                  </motion.button>
+                  <motion.button
+                    onClick={() => {
+                      setIsEditing(false);
+                      setFormData({
+                        firstName: user.firstName || "",
+                        lastName: user.lastName || "",
+                        bio: user.bio || "",
+                      });
+                    }}
+                    className="w-full py-3 border rounded-xl text-gray-600 hover:bg-gray-50"
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    Cancel
+                  </motion.button>
+                </>
+              ) : (
+                <motion.button
+                  onClick={() => setIsEditing(true)}
+                  className="w-full py-3 bg-pink-600 text-white rounded-xl font-semibold hover:bg-pink-700 transition"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  Edit Profile
+                </motion.button>
+              )}
+            </>
+          ) : (
+            <>
+              <motion.button
+                onClick={() => navigate(`/chat/${user.id}`)}
+                className="w-full py-3 bg-pink-600 text-white rounded-xl font-semibold hover:bg-pink-700 transition"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                Message 💬
+              </motion.button>
 
-          <motion.button
-            onClick={handleLike}
-            className={`w-full py-3 rounded-xl font-semibold border transition ${
-              liked
-                ? "bg-red-100 text-red-600 border-red-300"
-                : "bg-white text-gray-700"
-            }`}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            {liked ? "❤️ Liked" : "🤍 Like Profile"}
-          </motion.button>
-
-          <motion.button
-            onClick={() => navigate(-1)}
-            className="w-full py-3 border rounded-xl text-gray-600 hover:bg-gray-50"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            Back
-          </motion.button>
+              <motion.button
+                onClick={() => navigate(-1)}
+                className="w-full py-3 border rounded-xl text-gray-600 hover:bg-gray-50"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                Back
+              </motion.button>
+            </>
+          )}
         </motion.div>
       </motion.div>
     </div>

@@ -97,10 +97,15 @@ const Matches = () => {
         transition={{ delay: 0.3, duration: 0.6 }}
       >
         {filtered.map((match, index) => {
-          const imageUrl =
-            match.user.profileImageUrl ||
-            "https://via.placeholder.com/400x400?text=Profile";
-          const fullName = `${match.user.firstName} ${match.user.lastName || ""}`;
+          console.log("Rendering match:", match);
+
+          const userObj = match.user || match.matchedUser || match;
+          const userId = userObj.id;
+
+          console.log("Extracted user ID:", userId);
+
+          const imageUrl = userObj.profileImageUrl || "/default-profile.png";
+          const fullName = `${userObj.firstName} ${userObj.lastName || ""}`;
 
           return (
             <motion.div
@@ -116,32 +121,35 @@ const Matches = () => {
                 alt={fullName}
                 className="h-48 w-full object-cover"
                 onError={(e) => {
-                  e.target.src =
-                    "https://via.placeholder.com/400x400?text=Profile";
+                  e.target.onerror = null;
+                  e.target.src = "/default-profile.png";
                 }}
               />
 
               <div className="p-4 text-center">
                 <h2 className="font-bold text-lg">{fullName}</h2>
 
-                {match.user.bio && (
+                {userObj.bio && (
                   <p className="text-sm text-gray-600 mt-2 line-clamp-2">
-                    {match.user.bio}
+                    {userObj.bio}
                   </p>
                 )}
 
                 <span
                   className={`inline-block mt-2 text-xs px-3 py-1 rounded-full ${
-                    match.user.isOnline
+                    userObj.isOnline
                       ? "bg-green-500 text-white"
                       : "bg-gray-400 text-white"
                   }`}
                 >
-                  {match.user.isOnline ? "Online" : "Offline"}
+                  {userObj.isOnline ? "Online" : "Offline"}
                 </span>
 
                 <motion.button
-                  onClick={() => navigate(`/chat/${match.user.id}`)}
+                  onClick={() => {
+                    console.log("Navigating to chat with user ID:", userId);
+                    navigate(`/chat/${userId}`);
+                  }}
                   className="mt-3 w-full py-2 bg-pink-600 text-white rounded-xl"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
@@ -150,7 +158,10 @@ const Matches = () => {
                 </motion.button>
 
                 <motion.button
-                  onClick={() => navigate(`/profile/${match.user.id}`)}
+                  onClick={() => {
+                    console.log("Navigating to profile with user ID:", userId);
+                    navigate(`/profile/${userId}`);
+                  }}
                   className="mt-2 w-full py-2 border rounded-xl"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}

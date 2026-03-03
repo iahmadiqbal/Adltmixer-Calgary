@@ -47,6 +47,47 @@ export class UserService {
     });
   }
 
+  static async updateMyProfile(
+    userId: string,
+    data: {
+      firstName?: string;
+      lastName?: string;
+      bio?: string;
+      profileImageUrl?: string;
+      preference?: Preference;
+    },
+  ) {
+    const updateData: Prisma.UserUpdateInput = {};
+
+    if (data.firstName !== undefined) updateData.firstName = data.firstName;
+    if (data.lastName !== undefined) updateData.lastName = data.lastName;
+    if (data.bio !== undefined) updateData.bio = data.bio;
+    if (data.profileImageUrl !== undefined)
+      updateData.profileImageUrl = data.profileImageUrl;
+    if (data.preference !== undefined) updateData.preference = data.preference;
+
+    return prisma.user.update({
+      where: { id: userId },
+      data: updateData,
+      select: {
+        id: true,
+        email: true,
+        role: true,
+        emailVerified: true,
+        firstName: true,
+        lastName: true,
+        bio: true,
+        birthDate: true,
+        gender: true,
+        preference: true,
+        profileImageUrl: true,
+        isOnline: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
+  }
+
   static async discover(currentUserId: string, limit: number, page: number) {
     const skip = (page - 1) * limit;
 
@@ -163,5 +204,27 @@ export class UserService {
       console.error("Error fetching matches:", error);
       return [];
     }
+  }
+
+  static async getUserById(userId: string) {
+    return prisma.user.findUnique({
+      where: { id: userId },
+      select: {
+        id: true,
+        email: true,
+        role: true,
+        emailVerified: true,
+        firstName: true,
+        lastName: true,
+        bio: true,
+        birthDate: true,
+        gender: true,
+        preference: true,
+        profileImageUrl: true,
+        isOnline: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
   }
 }

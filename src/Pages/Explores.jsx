@@ -62,17 +62,25 @@ const Explore = () => {
     console.log("Extracted user ID:", userId);
 
     if (liked.includes(userId)) {
-      setLiked(liked.filter((id) => id !== userId));
-    } else {
-      setLiked([...liked, userId]);
+      return;
+    }
 
-      try {
-        console.log("Sending like request with toUserId:", userId);
-        await api.post("/likes", { toUserId: userId });
-        console.log(`Successfully liked user ${userId}`);
-      } catch (error) {
-        console.error("Like failed:", error);
-        console.error("Error response:", error.response?.data);
+    setLiked([...liked, userId]);
+
+    try {
+      console.log("Sending like request with toUserId:", userId);
+      await api.post("/likes", { toUserId: userId });
+      console.log(`Successfully liked user ${userId}`);
+    } catch (error) {
+      console.error("Like failed:", error);
+      console.error("Error response:", error.response?.data);
+
+      if (
+        error.response?.status === 400 &&
+        error.response?.data?.message === "You already liked this user"
+      ) {
+        console.log("User already liked, keeping liked state");
+      } else {
         alert("Failed to like user. Please try again.");
         setLiked(liked.filter((id) => id !== userId));
       }
@@ -145,6 +153,11 @@ const Explore = () => {
                   : "https://via.placeholder.com/400x400?text=Profile";
 
               const userId = user.user ? user.user.id : user.id;
+              const isLiked =
+                user.isLiked ||
+                user.alreadyLiked ||
+                user.likedByCurrentUser ||
+                liked.includes(userId);
 
               return (
                 <motion.div
@@ -186,25 +199,26 @@ const Explore = () => {
                         <X /> Skip
                       </motion.button>
                       <motion.button
-                        onClick={() => handleLike(user)}
+                        onClick={() => !isLiked && handleLike(user)}
+                        disabled={isLiked}
                         className={`flex-1 py-3 rounded-xl flex justify-center items-center gap-2 font-semibold transition
                         ${
-                          liked.includes(userId)
-                            ? "bg-red-100 text-red-600"
+                          isLiked
+                            ? "bg-red-100 text-red-600 cursor-not-allowed"
                             : "bg-white border text-gray-600 hover:bg-gray-100"
                         }
                       `}
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
+                        whileHover={!isLiked ? { scale: 1.05 } : {}}
+                        whileTap={!isLiked ? { scale: 0.95 } : {}}
                       >
                         <Heart
                           className={`${
-                            liked.includes(userId)
+                            isLiked
                               ? "fill-red-500 text-red-500"
                               : "text-gray-400"
                           }`}
                         />
-                        {liked.includes(userId) ? "Liked" : "Like"}
+                        {isLiked ? "Liked" : "Like"}
                       </motion.button>
                     </div>
                   </div>

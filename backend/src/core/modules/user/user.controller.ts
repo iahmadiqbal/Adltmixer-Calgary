@@ -39,7 +39,7 @@ export class UserController {
 
     const validated = updateProfileSchema.parse(req.body);
 
-    const updatedUser = await UserService.updateById(
+    const updatedUser = await UserService.updateMyProfile(
       req.user.userId,
       validated,
     );
@@ -55,5 +55,21 @@ export class UserController {
     const matches = await UserService.getMatches(req.user.userId);
 
     res.status(200).json(matches);
+  });
+
+  static getUserById = asyncHandler(async (req: Request, res: Response) => {
+    if (!req.user) {
+      throw new AppError("Unauthorized", 401);
+    }
+
+    const { id } = req.params;
+
+    const user = await UserService.getUserById(id);
+
+    if (!user) {
+      throw new AppError("User not found", 404);
+    }
+
+    res.status(200).json(user);
   });
 }
