@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { useParams, useNavigate } from "react-router-dom";
 import api from "../services/api";
@@ -14,6 +14,7 @@ const Profile = () => {
     firstName: "",
     lastName: "",
     bio: "",
+    profileImageUrl: "",
   });
 
   useEffect(() => {
@@ -39,6 +40,7 @@ const Profile = () => {
             firstName: response.data.firstName || "",
             lastName: response.data.lastName || "",
             bio: response.data.bio || "",
+            profileImageUrl: response.data.profileImageUrl || "",
           });
         }
       } catch (error) {
@@ -53,21 +55,52 @@ const Profile = () => {
   }, [id]);
 
   const handleChange = (e) => {
+    console.log("Field changed:", e.target.name, "=", e.target.value);
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSave = async () => {
+  const handleSave = async (e) => {
+    if (e) e.preventDefault();
+
+    alert("HANDLE SAVE EXECUTED - Check console and Network tab!");
+    console.log("=== SAVE CLICKED ===");
+    console.log("isEditing:", isEditing);
+    console.log("Sending data:", formData);
+
     try {
+      console.log("Making API call to PATCH /users/me/profile");
       const response = await api.patch("/users/me/profile", formData);
-      console.log("Profile updated:", response.data);
+      console.log("API Response:", response.data);
       setUser(response.data);
       setIsEditing(false);
       alert("Profile updated successfully!");
     } catch (error) {
       console.error("Failed to update profile:", error);
-      alert("Failed to update profile. Please try again.");
+      console.error("Error details:", error.response?.data);
+      alert(
+        "Failed to update profile: " +
+          (error.response?.data?.message || error.message),
+      );
     }
   };
+
+  const handleEditClick = () => {
+    console.log("Edit button clicked - setting isEditing to true");
+    setIsEditing(true);
+  };
+
+  const handleCancelClick = () => {
+    console.log("Cancel button clicked - resetting form");
+    setIsEditing(false);
+    setFormData({
+      firstName: user.firstName || "",
+      lastName: user.lastName || "",
+      bio: user.bio || "",
+      profileImageUrl: user.profileImageUrl || "",
+    });
+  };
+
+  console.log("Profile render - isOwnProfile:", !id, "isEditing:", isEditing);
 
   if (loading) {
     return (
@@ -164,6 +197,14 @@ const Profile = () => {
               rows="3"
               className="w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-pink-500 outline-none"
             />
+            <input
+              type="text"
+              name="profileImageUrl"
+              value={formData.profileImageUrl}
+              onChange={handleChange}
+              placeholder="Profile Image URL"
+              className="w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-pink-500 outline-none"
+            />
           </motion.div>
         ) : (
           <>
@@ -203,39 +244,42 @@ const Profile = () => {
             <>
               {isEditing ? (
                 <>
-                  <motion.button
-                    onClick={handleSave}
-                    className="w-full py-3 bg-pink-600 text-white rounded-xl font-semibold hover:bg-pink-700 transition"
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    Save Changes
-                  </motion.button>
-                  <motion.button
+                  <button
+                    type="button"
                     onClick={() => {
-                      setIsEditing(false);
-                      setFormData({
-                        firstName: user.firstName || "",
-                        lastName: user.lastName || "",
-                        bio: user.bio || "",
-                      });
+                      alert("BUTTON CLICKED!");
+                      console.log("Direct onClick fired");
+                      handleSave();
                     }}
-                    className="w-full py-3 border rounded-xl text-gray-600 hover:bg-gray-50"
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
+                    style={{
+                      width: "100%",
+                      padding: "12px",
+                      backgroundColor: "#db2777",
+                      color: "white",
+                      borderRadius: "12px",
+                      fontWeight: "600",
+                      border: "none",
+                      cursor: "pointer",
+                    }}
+                  >
+                    💾 SAVE CHANGES (TEST)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleCancelClick}
+                    className="w-full py-3 border rounded-xl text-gray-600 hover:bg-gray-50 transition transform hover:scale-105 active:scale-95"
                   >
                     Cancel
-                  </motion.button>
+                  </button>
                 </>
               ) : (
-                <motion.button
-                  onClick={() => setIsEditing(true)}
-                  className="w-full py-3 bg-pink-600 text-white rounded-xl font-semibold hover:bg-pink-700 transition"
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
+                <button
+                  type="button"
+                  onClick={handleEditClick}
+                  className="w-full py-3 bg-pink-600 text-white rounded-xl font-semibold hover:bg-pink-700 transition transform hover:scale-105 active:scale-95"
                 >
                   Edit Profile
-                </motion.button>
+                </button>
               )}
             </>
           ) : (

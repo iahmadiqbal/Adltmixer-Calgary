@@ -33,18 +33,38 @@ export class UserController {
   });
 
   static updateMyProfile = asyncHandler(async (req: Request, res: Response) => {
+    console.log("=== UPDATE MY PROFILE CONTROLLER ===");
+    console.log("Request body:", req.body);
+    console.log("User from token:", req.user?.userId);
+
     if (!req.user) {
       throw new AppError("Unauthorized", 401);
     }
 
-    const validated = updateProfileSchema.parse(req.body);
+    try {
+      console.log("Validating with schema...");
+      const validated = updateProfileSchema.parse(req.body);
+      console.log("Validated data:", validated);
 
-    const updatedUser = await UserService.updateMyProfile(
-      req.user.userId,
-      validated,
-    );
+      console.log("Calling service...");
+      const updatedUser = await UserService.updateMyProfile(
+        req.user.userId,
+        validated,
+      );
 
-    res.status(200).json(updatedUser);
+      console.log("Sending response:", updatedUser);
+      console.log("=== END UPDATE MY PROFILE CONTROLLER ===");
+
+      res.status(200).json(updatedUser);
+    } catch (error) {
+      console.error("=== VALIDATION OR SERVICE ERROR ===");
+      console.error("Error:", error);
+      if (error instanceof Error) {
+        console.error("Error message:", error.message);
+        console.error("Error stack:", error.stack);
+      }
+      throw error;
+    }
   });
 
   static getMatches = asyncHandler(async (req: Request, res: Response) => {
@@ -62,7 +82,7 @@ export class UserController {
       throw new AppError("Unauthorized", 401);
     }
 
-    const { id } = req.params;
+    const id = req.params.id as string;
 
     const user = await UserService.getUserById(id);
 

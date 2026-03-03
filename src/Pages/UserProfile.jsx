@@ -4,6 +4,7 @@ import { User, Mail, FileText, Image, Save } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import toast, { Toaster } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import api from "../services/api";
 
 const UserProfile = () => {
   const { user, updateUser } = useAuth();
@@ -34,12 +35,21 @@ const UserProfile = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
 
-    setTimeout(() => {
-      updateUser(formData);
+    try {
+      console.log("=== SUBMITTING PROFILE UPDATE ===");
+      console.log("Form data:", formData);
+
+      // Make actual API call to backend
+      const response = await api.patch("/users/me/profile", formData);
+
+      console.log("API Response:", response.data);
+
+      // Update local context with response from server
+      updateUser(response.data);
 
       toast.success("Profile updated successfully!", {
         duration: 3000,
@@ -59,7 +69,28 @@ const UserProfile = () => {
       });
 
       setIsLoading(false);
-    }, 800);
+    } catch (error) {
+      console.error("Failed to update profile:", error);
+      console.error("Error response:", error.response?.data);
+
+      toast.error(
+        error.response?.data?.message ||
+          "Failed to update profile. Please try again.",
+        {
+          duration: 4000,
+          position: "top-center",
+          style: {
+            background: "#FEF2F2",
+            color: "#DC2626",
+            fontWeight: "500",
+            borderRadius: "10px",
+            padding: "12px 20px",
+          },
+        },
+      );
+
+      setIsLoading(false);
+    }
   };
 
   if (!user) {
@@ -88,7 +119,9 @@ const UserProfile = () => {
           <h2 className="text-4xl font-bold bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent mb-2">
             My Profile
           </h2>
-          <p className="text-gray-600 text-sm">Update your profile information</p>
+          <p className="text-gray-600 text-sm">
+            Update your profile information
+          </p>
         </motion.div>
 
         <motion.div
@@ -123,7 +156,10 @@ const UserProfile = () => {
                 First Name
               </label>
               <div className="relative">
-                <User className="absolute left-4 top-3.5 text-gray-400" size={20} />
+                <User
+                  className="absolute left-4 top-3.5 text-gray-400"
+                  size={20}
+                />
                 <input
                   type="text"
                   name="firstName"
@@ -141,7 +177,10 @@ const UserProfile = () => {
                 Last Name
               </label>
               <div className="relative">
-                <User className="absolute left-4 top-3.5 text-gray-400" size={20} />
+                <User
+                  className="absolute left-4 top-3.5 text-gray-400"
+                  size={20}
+                />
                 <input
                   type="text"
                   name="lastName"
@@ -159,7 +198,10 @@ const UserProfile = () => {
               Email (Read-only)
             </label>
             <div className="relative">
-              <Mail className="absolute left-4 top-3.5 text-gray-400" size={20} />
+              <Mail
+                className="absolute left-4 top-3.5 text-gray-400"
+                size={20}
+              />
               <input
                 type="email"
                 value={user.email}
@@ -194,7 +236,10 @@ const UserProfile = () => {
               Profile Image URL
             </label>
             <div className="relative">
-              <Image className="absolute left-4 top-3.5 text-gray-400" size={20} />
+              <Image
+                className="absolute left-4 top-3.5 text-gray-400"
+                size={20}
+              />
               <input
                 type="url"
                 name="profileImageUrl"

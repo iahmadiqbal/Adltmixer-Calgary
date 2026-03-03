@@ -57,6 +57,10 @@ export class UserService {
       preference?: Preference;
     },
   ) {
+    console.log("=== UPDATE MY PROFILE SERVICE ===");
+    console.log("User ID:", userId);
+    console.log("Incoming data:", data);
+
     const updateData: Prisma.UserUpdateInput = {};
 
     if (data.firstName !== undefined) updateData.firstName = data.firstName;
@@ -66,7 +70,10 @@ export class UserService {
       updateData.profileImageUrl = data.profileImageUrl;
     if (data.preference !== undefined) updateData.preference = data.preference;
 
-    return prisma.user.update({
+    console.log("Update data to be sent to Prisma:", updateData);
+    console.log("Update data keys:", Object.keys(updateData));
+
+    const result = await prisma.user.update({
       where: { id: userId },
       data: updateData,
       select: {
@@ -86,6 +93,11 @@ export class UserService {
         updatedAt: true,
       },
     });
+
+    console.log("Prisma update result:", result);
+    console.log("=== END UPDATE MY PROFILE SERVICE ===");
+
+    return result;
   }
 
   static async discover(currentUserId: string, limit: number, page: number) {
