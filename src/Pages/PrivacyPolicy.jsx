@@ -82,7 +82,7 @@ const PrivacyPolicy = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-24 pb-16">
+    <div className="min-h-screen bg-gray-50 pt-24 pb-8">
       <div className="max-w-5xl mx-auto px-6">
         {/* Header */}
         <motion.div

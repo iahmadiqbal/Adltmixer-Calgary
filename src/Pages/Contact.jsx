@@ -35,7 +35,7 @@ const Contact = () => {
 
       {/* ================= INFO CARDS ================= */}
       <motion.section 
-        className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 px-6 -mt-16 mb-20"
+        className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 px-6 -mt-16 mb-12"
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: 0.5 }}
@@ -61,7 +61,7 @@ const Contact = () => {
       </motion.section>
 
       {/* ================= FORM + TEXT ================= */}
-      <section className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-2 gap-14 mb-24">
+      <section className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-2 gap-14 mb-12">
         {/* FORM */}
         <motion.div 
           className="bg-white p-10 rounded-3xl shadow-xl"
@@ -190,7 +190,7 @@ const Contact = () => {
 
       {/* ================= MAP ================= */}
       <motion.section 
-        className="max-w-6xl mx-auto px-6 mb-24"
+        className="max-w-6xl mx-auto px-6 mb-8"
         initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}

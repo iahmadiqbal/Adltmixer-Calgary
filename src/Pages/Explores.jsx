@@ -145,7 +145,7 @@ const handleLike = (profile) => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-pink-50 to-white pt-28 px-6">
+    <div className="min-h-screen bg-gradient-to-b from-pink-50 to-white pt-28 px-6 pb-8">
       {/* HEADER */}
       <motion.div 
         className="text-center mb-14"

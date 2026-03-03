@@ -62,7 +62,7 @@ const Matches = () => {
   };
 
   return (
-    <div className="min-h-screen pt-24 px-4 pb-10 relative overflow-hidden">
+    <div className="min-h-screen pt-24 px-4 relative overflow-hidden pb-8">
       {/* Animated Background */}
       <div className="fixed inset-0 -z-10 bg-gradient-to-br from-pink-50 via-purple-50 to-blue-50">
         <div className="absolute top-20 left-10 w-72 h-72 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-blob"></div>

@@ -546,15 +546,20 @@ const HeroSection = () => {
             </motion.ul>
           </motion.div>
 
-          <motion.img
-            src="https://images.unsplash.com/photo-1494790108377-be9c29b29330"
-            alt="Safety"
-            className="rounded-3xl shadow-xl"
+          <motion.div
+            className="rounded-3xl shadow-xl w-full max-w-sm mx-auto h-80 overflow-hidden"
             initial={{ opacity: 0, x: 50 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
-          />
+          >
+            <img
+              src="https://images.unsplash.com/photo-1494790108377-be9c29b29330"
+              alt="Safety"
+              className="w-full h-full object-cover"
+              style={{ objectPosition: 'center 20%' }}
+            />
+          </motion.div>
         </div>
       </section>
 

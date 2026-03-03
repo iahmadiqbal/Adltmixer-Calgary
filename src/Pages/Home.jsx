@@ -5,7 +5,7 @@ import CallToAction from "../components/homeComponents/CallToAction";
 
 const Home = () => {
   return (
-    <div className="w-full min-h-screen bg-gray-50">
+    <div className="w-full min-h-screen bg-gray-50 pb-8">
       <HeroSection />
       <FeaturesSection />
       {/* <CallToAction /> */}
