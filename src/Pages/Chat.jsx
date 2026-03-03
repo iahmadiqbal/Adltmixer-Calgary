@@ -36,20 +36,11 @@ const Chat = () => {
   ]);
 
   useEffect(() => {
-    console.log("Chat component mounted");
-    console.log("User ID from params:", id);
-    console.log("Current user:", currentUser);
-    console.log("Auth loading:", authLoading);
-  }, []);
-
-  useEffect(() => {
     if (authLoading) {
-      console.log("Waiting for auth to load...");
       return;
     }
 
     if (!currentUser) {
-      console.log("No current user, redirecting to login");
       setLoading(false);
       setError("Please log in to view chat");
       setTimeout(() => navigate("/login"), 1000);
@@ -57,7 +48,6 @@ const Chat = () => {
     }
 
     if (!id) {
-      console.log("No user ID in params");
       setLoading(false);
       setError("Invalid chat");
       return;
@@ -68,16 +58,12 @@ const Chat = () => {
         setLoading(true);
         setError(null);
 
-        console.log("Fetching match for user:", id);
         const matchResponse = await api.get(`/messages/match/${id}`);
-        console.log("Match response:", matchResponse.data);
         setMatchData(matchResponse.data);
 
-        console.log("Fetching messages for match:", matchResponse.data.matchId);
         const messagesResponse = await api.get(
           `/messages/${matchResponse.data.matchId}`,
         );
-        console.log("Messages:", messagesResponse.data);
         setMessages(messagesResponse.data);
       } catch (error) {
         console.error("Failed to load chat:", error);
@@ -153,15 +139,6 @@ const Chat = () => {
       return "";
     }
   };
-
-  console.log(
-    "Rendering Chat - loading:",
-    loading,
-    "error:",
-    error,
-    "matchData:",
-    matchData,
-  );
 
   if (authLoading || loading) {
     return (
