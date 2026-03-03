@@ -102,4 +102,46 @@ export class MessageService {
 
     return conversations;
   }
+
+  static async getMatchByUsers(userId: string, otherUserId: string) {
+    const match = await prisma.match.findFirst({
+      where: {
+        OR: [
+          { user1Id: userId, user2Id: otherUserId },
+          { user1Id: otherUserId, user2Id: userId },
+        ],
+      },
+      include: {
+        user1: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            profileImageUrl: true,
+            isOnline: true,
+          },
+        },
+        user2: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            profileImageUrl: true,
+            isOnline: true,
+          },
+        },
+      },
+    });
+
+    if (!match) {
+      throw new AppError("Match not found", 404);
+    }
+
+    const otherUser = match.user1Id === userId ? match.user2 : match.user1;
+
+    return {
+      matchId: match.id,
+      otherUser,
+    };
+  }
 }

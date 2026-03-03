@@ -66,4 +66,23 @@ export class MessageController {
       res.status(200).json(conversations);
     },
   );
+
+  static getMatchByUsers = asyncHandler(async (req: Request, res: Response) => {
+    if (!req.user) {
+      throw new AppError("Unauthorized", 401);
+    }
+
+    const { otherUserId } = req.params;
+
+    if (!otherUserId) {
+      throw new AppError("otherUserId is required", 400);
+    }
+
+    const match = await MessageService.getMatchByUsers(
+      req.user.userId,
+      otherUserId,
+    );
+
+    res.status(200).json(match);
+  });
 }

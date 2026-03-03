@@ -5,6 +5,11 @@ import { authenticate } from "../../middleware/auth.middleware";
 const router = Router();
 
 router.post("/", authenticate, MessageController.sendMessage);
+router.get(
+  "/match/:otherUserId",
+  authenticate,
+  MessageController.getMatchByUsers,
+);
 router.get("/:matchId", authenticate, MessageController.getMessagesByMatch);
 router.get(
   "/conversations/all",
