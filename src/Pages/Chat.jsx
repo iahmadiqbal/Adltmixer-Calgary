@@ -1,5 +1,5 @@
 // Updated UI - v3.0 with animated background theme
-import { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useParams, useNavigate } from "react-router-dom";
 import {
@@ -18,7 +18,8 @@ const Chat = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { user: currentUser, loading: authLoading } = useAuth();
-  const messagesEndRef = useRef(null);
+  const messagesContainerRef = useRef(null);
+  const inputRef = useRef(null);
 
   const [matchData, setMatchData] = useState(null);
   const [messages, setMessages] = useState([]);
@@ -82,7 +83,10 @@ const Chat = () => {
   }, [id, currentUser, authLoading, navigate]);
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (messagesContainerRef.current) {
+      messagesContainerRef.current.scrollTop =
+        messagesContainerRef.current.scrollHeight;
+    }
   }, [messages]);
 
   const sendMessage = async () => {
@@ -105,6 +109,10 @@ const Chat = () => {
       setText(messageContent);
     } finally {
       setSending(false);
+      // Refocus input after sending completes
+      requestAnimationFrame(() => {
+        inputRef.current?.focus();
+      });
     }
   };
 
@@ -251,6 +259,7 @@ const Chat = () => {
 
       {/* Messages Area */}
       <motion.div
+        ref={messagesContainerRef}
         className="backdrop-blur-lg bg-white/60 rounded-3xl shadow-xl border border-white/50 p-6 max-w-4xl mx-auto mb-6 overflow-y-auto"
         style={{ minHeight: "500px", maxHeight: "calc(100vh - 350px)" }}
         initial={{ opacity: 0, scale: 0.95 }}
@@ -317,7 +326,6 @@ const Chat = () => {
             );
           })}
         </AnimatePresence>
-        <div ref={messagesEndRef} />
       </motion.div>
 
       {/* Input Area */}
@@ -344,10 +352,11 @@ const Chat = () => {
             <Smile size={22} />
           </motion.button>
           <input
+            ref={inputRef}
             className="flex-1 px-5 py-3 bg-gray-100 rounded-full focus:outline-none focus:ring-2 focus:ring-pink-400 transition text-gray-800 placeholder-gray-500"
             value={text}
             onChange={(e) => setText(e.target.value)}
-            onKeyPress={(e) => e.key === "Enter" && sendMessage()}
+            onKeyDown={(e) => e.key === "Enter" && sendMessage()}
             placeholder="Type a message..."
             disabled={sending}
           />
@@ -410,7 +419,7 @@ const Chat = () => {
         </AnimatePresence>
       </motion.div>
 
-      <style jsx>{`
+      <style>{`
         @keyframes blob {
           0%,
           100% {
