@@ -161,14 +161,22 @@ const Explore = () => {
       {/* HEADER */}
       <motion.div
         className="text-center mb-14"
-        initial={{ opacity: 0, y: 20 }}
+        initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
       >
-        <h1 className="text-4xl md:text-5xl font-bold text-pink-600">
-          Explore Matches
-        </h1>
-        <p className="mt-4 text-gray-600 max-w-2xl mx-auto">
+        <motion.div
+          className="inline-flex items-center gap-2 mb-4"
+          animate={{ scale: [1, 1.05, 1] }}
+          transition={{ duration: 2, repeat: Infinity }}
+        >
+          <Heart className="text-pink-500 fill-pink-500" size={32} />
+          <h1 className="text-5xl md:text-6xl font-extrabold bg-gradient-to-r from-pink-600 via-purple-600 to-blue-600 bg-clip-text text-transparent">
+            Explore Matches
+          </h1>
+          <Heart className="text-pink-500 fill-pink-500" size={32} />
+        </motion.div>
+        <p className="text-gray-600 text-lg">
           Discover real adults nearby. Filter by preference and connect with
           confidence.
         </p>

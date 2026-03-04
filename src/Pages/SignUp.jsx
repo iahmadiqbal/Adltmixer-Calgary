@@ -4,9 +4,11 @@ import { Eye, EyeOff, User, Mail, Calendar, Lock, Heart } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast";
 import api from "../services/api";
+import { useAuth } from "../context/AuthContext";
 
 const SignUp = () => {
   const navigate = useNavigate();
+  const { login } = useAuth();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -17,9 +19,32 @@ const SignUp = () => {
 
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
+  const [passwordStrength, setPasswordStrength] = useState({
+    hasMinLength: false,
+    hasUpperCase: false,
+    hasLowerCase: false,
+    hasNumber: false,
+    hasSpecialChar: false,
+  });
+
+  const validatePassword = (password) => {
+    setPasswordStrength({
+      hasMinLength: password.length >= 8,
+      hasUpperCase: /[A-Z]/.test(password),
+      hasLowerCase: /[a-z]/.test(password),
+      hasNumber: /[0-9]/.test(password),
+      hasSpecialChar: /[^A-Za-z0-9]/.test(password),
+    });
+  };
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+
+    // Validate password on change
+    if (name === "password") {
+      validatePassword(value);
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -34,6 +59,26 @@ const SignUp = () => {
     ) {
       setError("All fields are required");
       toast.error("All fields are required", {
+        duration: 3000,
+        position: "top-center",
+        style: {
+          background: "#FEE2E2",
+          color: "#DC2626",
+          fontWeight: "600",
+          borderRadius: "12px",
+          padding: "16px",
+        },
+      });
+      return;
+    }
+
+    // Check password strength
+    const isPasswordStrong = Object.values(passwordStrength).every(
+      (val) => val === true,
+    );
+    if (!isPasswordStrong) {
+      setError("Password does not meet all requirements");
+      toast.error("Password does not meet all requirements", {
         duration: 3000,
         position: "top-center",
         style: {
@@ -66,21 +111,26 @@ const SignUp = () => {
     setError("");
 
     try {
-      const firstName = formData.name.trim().split(" ")[0];
+      // Split full name into firstName and lastName
+      const nameParts = formData.name.trim().split(" ");
+      const firstName = nameParts[0];
+      const lastName = nameParts.slice(1).join(" ") || ""; // Join remaining parts as lastName
+
       const currentYear = new Date().getFullYear();
       const birthYear = currentYear - Number(formData.age);
       const birthDate = `${birthYear}-01-01`;
 
       const response = await api.post("/auth/register", {
         firstName,
+        lastName: lastName || undefined, // Send undefined if empty
         email: formData.email,
         password: formData.password,
         birthDate,
         gender: formData.gender,
       });
 
-      localStorage.setItem("token", response.data.token);
-      localStorage.setItem("user", JSON.stringify(response.data.user));
+      // Use AuthContext login to update state immediately
+      login(response.data.user, response.data.token);
 
       toast.success("Welcome to Adultmixer! Let's find your match 💕", {
         duration: 2000,
@@ -270,6 +320,82 @@ const SignUp = () => {
                 {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
               </span>
             </div>
+
+            {/* Password Strength Indicator */}
+            {formData.password && (
+              <motion.div
+                className="mt-3 p-3 bg-gray-50 rounded-lg space-y-2"
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                transition={{ duration: 0.3 }}
+              >
+                <p className="text-xs font-semibold text-gray-700 mb-2">
+                  Password Requirements:
+                </p>
+                <div className="space-y-1.5">
+                  <div className="flex items-center gap-2">
+                    <span
+                      className={`text-xs ${passwordStrength.hasMinLength ? "text-green-600" : "text-gray-400"}`}
+                    >
+                      {passwordStrength.hasMinLength ? "✓" : "○"}
+                    </span>
+                    <span
+                      className={`text-xs ${passwordStrength.hasMinLength ? "text-green-600" : "text-gray-600"}`}
+                    >
+                      At least 8 characters
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span
+                      className={`text-xs ${passwordStrength.hasUpperCase ? "text-green-600" : "text-gray-400"}`}
+                    >
+                      {passwordStrength.hasUpperCase ? "✓" : "○"}
+                    </span>
+                    <span
+                      className={`text-xs ${passwordStrength.hasUpperCase ? "text-green-600" : "text-gray-600"}`}
+                    >
+                      One uppercase letter (A-Z)
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span
+                      className={`text-xs ${passwordStrength.hasLowerCase ? "text-green-600" : "text-gray-400"}`}
+                    >
+                      {passwordStrength.hasLowerCase ? "✓" : "○"}
+                    </span>
+                    <span
+                      className={`text-xs ${passwordStrength.hasLowerCase ? "text-green-600" : "text-gray-600"}`}
+                    >
+                      One lowercase letter (a-z)
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span
+                      className={`text-xs ${passwordStrength.hasNumber ? "text-green-600" : "text-gray-400"}`}
+                    >
+                      {passwordStrength.hasNumber ? "✓" : "○"}
+                    </span>
+                    <span
+                      className={`text-xs ${passwordStrength.hasNumber ? "text-green-600" : "text-gray-600"}`}
+                    >
+                      One number (0-9)
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span
+                      className={`text-xs ${passwordStrength.hasSpecialChar ? "text-green-600" : "text-gray-400"}`}
+                    >
+                      {passwordStrength.hasSpecialChar ? "✓" : "○"}
+                    </span>
+                    <span
+                      className={`text-xs ${passwordStrength.hasSpecialChar ? "text-green-600" : "text-gray-600"}`}
+                    >
+                      One special character (!@#$%^&*)
+                    </span>
+                  </div>
+                </div>
+              </motion.div>
+            )}
           </div>
 
           <motion.button
