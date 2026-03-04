@@ -54,6 +54,44 @@ export const authenticate = (
   }
 };
 
+// Optional authentication - allows both authenticated and unauthenticated access
+export const optionalAuthenticate = (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): void => {
+  try {
+    const authHeader = req.headers.authorization;
+
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      // No token provided, continue without user
+      req.user = undefined;
+      next();
+      return;
+    }
+
+    const token = authHeader.substring(7);
+
+    if (!token) {
+      req.user = undefined;
+      next();
+      return;
+    }
+
+    const decoded = jwt.verify(token, env.JWT_SECRET) as JwtPayload;
+
+    if (decoded.userId && decoded.role) {
+      req.user = decoded;
+    }
+
+    next();
+  } catch (error) {
+    // If token is invalid, just continue without user
+    req.user = undefined;
+    next();
+  }
+};
+
 export const authorize = (...roles: Role[]) => {
   return (req: Request, res: Response, next: NextFunction): void => {
     if (!req.user) {

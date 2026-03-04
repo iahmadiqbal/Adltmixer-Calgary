@@ -3,15 +3,27 @@ import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { Search, Heart, MessageCircle, Sparkles } from "lucide-react";
 import api from "../services/api";
+import { useAuth } from "../context/AuthContext";
 
 const Matches = () => {
   const [search, setSearch] = useState("");
   const [matches, setMatches] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const { user, loading: authLoading } = useAuth();
 
   useEffect(() => {
     const fetchMatches = async () => {
+      // Check if user is logged in
+      if (!authLoading && !user) {
+        setLoading(false);
+        return;
+      }
+
+      if (authLoading) {
+        return;
+      }
+
       try {
         const response = await api.get("/users/matches");
         setMatches(response.data);
@@ -24,7 +36,7 @@ const Matches = () => {
     };
 
     fetchMatches();
-  }, []);
+  }, [user, authLoading]);
 
   const filtered = matches.filter((m) => {
     const fullName =
@@ -32,10 +44,35 @@ const Matches = () => {
     return fullName.includes(search.toLowerCase());
   });
 
-  if (loading) {
+  if (loading || authLoading) {
     return (
       <div className="min-h-screen pt-28 px-4 bg-gradient-to-b from-pink-50 to-white flex items-center justify-center">
         <p className="text-gray-600">Loading matches...</p>
+      </div>
+    );
+  }
+
+  // Show login prompt if user is not authenticated
+  if (!user) {
+    return (
+      <div className="min-h-screen pt-28 px-4 bg-gradient-to-b from-pink-50 to-white flex items-center justify-center">
+        <div className="text-center">
+          <Heart className="mx-auto mb-4 text-pink-500" size={64} />
+          <h2 className="text-2xl font-bold text-gray-700 mb-4">
+            Please login to see your matches
+          </h2>
+          <p className="text-gray-600 mb-6">
+            You need to be logged in to view your matches and connections.
+          </p>
+          <motion.button
+            onClick={() => navigate("/login")}
+            className="px-6 py-3 bg-pink-600 text-white rounded-xl font-semibold hover:bg-pink-700"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            Login Now
+          </motion.button>
+        </div>
       </div>
     );
   }
