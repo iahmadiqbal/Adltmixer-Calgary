@@ -100,9 +100,38 @@ export class UserService {
     return result;
   }
 
-  static async discover(currentUserId: string, limit: number, page: number) {
+  static async discover(
+    currentUserId: string | undefined,
+    limit: number,
+    page: number,
+  ) {
     const skip = (page - 1) * limit;
 
+    // If no user is logged in, return all public profiles
+    if (!currentUserId) {
+      const users = await prisma.user.findMany({
+        where: {
+          deletedAt: null,
+          isBlocked: false,
+        },
+        skip,
+        take: limit,
+        select: {
+          id: true,
+          firstName: true,
+          lastName: true,
+          bio: true,
+          gender: true,
+          preference: true,
+          profileImageUrl: true,
+          birthDate: true,
+          createdAt: true,
+        },
+      });
+      return users;
+    }
+
+    // Authenticated user - personalized results
     const currentUser = await prisma.user.findUnique({
       where: { id: currentUserId },
       select: {
@@ -158,6 +187,7 @@ export class UserService {
         gender: true,
         preference: true,
         profileImageUrl: true,
+        birthDate: true,
         createdAt: true,
       },
     });

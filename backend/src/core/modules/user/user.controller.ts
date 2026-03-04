@@ -20,14 +20,12 @@ export class UserController {
   });
 
   static discoverUsers = asyncHandler(async (req: Request, res: Response) => {
-    if (!req.user) {
-      throw new AppError("Unauthorized", 401);
-    }
-
     const limit = parseInt(req.query.limit as string) || 10;
     const page = parseInt(req.query.page as string) || 1;
 
-    const users = await UserService.discover(req.user.userId, limit, page);
+    // Pass userId if authenticated, undefined if not
+    const userId = req.user?.userId;
+    const users = await UserService.discover(userId, limit, page);
 
     res.status(200).json(users);
   });

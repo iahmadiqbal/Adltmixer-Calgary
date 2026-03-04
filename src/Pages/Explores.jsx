@@ -3,9 +3,11 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Heart, X, Users } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import api from "../services/api";
+import { useAuth } from "../context/AuthContext";
 
 const Explore = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   /* ================= STATES ================= */
   const [isAdult, setIsAdult] = useState(null);
@@ -71,6 +73,13 @@ const Explore = () => {
       return;
     }
 
+    // Check if user is logged in
+    if (!user) {
+      alert("Please login to like profiles");
+      navigate("/login");
+      return;
+    }
+
     setLiked([...liked, userId]);
 
     try {
@@ -82,6 +91,10 @@ const Explore = () => {
         error.response?.data?.message === "You already liked this user"
       ) {
         // Already liked, keep the state
+      } else if (error.response?.status === 401) {
+        alert("Please login to like profiles");
+        navigate("/login");
+        setLiked(liked.filter((id) => id !== userId));
       } else {
         alert("Failed to like user. Please try again.");
         setLiked(liked.filter((id) => id !== userId));
