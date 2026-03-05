@@ -38,7 +38,9 @@ export class MessageController {
         throw new AppError("Unauthorized", 401);
       }
 
-      const { matchId } = req.params;
+      const matchId = Array.isArray(req.params.matchId)
+        ? req.params.matchId[0]
+        : req.params.matchId;
 
       if (!matchId) {
         throw new AppError("matchId is required", 400);
@@ -72,7 +74,9 @@ export class MessageController {
       throw new AppError("Unauthorized", 401);
     }
 
-    const { otherUserId } = req.params;
+    const otherUserId = Array.isArray(req.params.otherUserId)
+      ? req.params.otherUserId[0]
+      : req.params.otherUserId;
 
     if (!otherUserId) {
       throw new AppError("otherUserId is required", 400);
