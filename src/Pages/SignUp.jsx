@@ -129,25 +129,27 @@ const SignUp = () => {
         gender: formData.gender,
       });
 
-      // Use AuthContext login to update state immediately
-      login(response.data.user, response.data.token);
-
-      toast.success("Welcome to Adultmixer! Let's find your match 💕", {
-        duration: 2000,
-        position: "top-center",
-        icon: "🎉",
-        style: {
-          background: "#DCFCE7",
-          color: "#16A34A",
-          fontWeight: "600",
-          borderRadius: "12px",
-          padding: "16px",
+      // Show verification message
+      toast.success(
+        "Account created! Please check your email to verify your account 📧",
+        {
+          duration: 5000,
+          position: "top-center",
+          icon: "✉️",
+          style: {
+            background: "#DCFCE7",
+            color: "#16A34A",
+            fontWeight: "600",
+            borderRadius: "12px",
+            padding: "16px",
+          },
         },
-      });
+      );
 
+      // Redirect to login after showing message
       setTimeout(() => {
-        navigate("/explore");
-      }, 2000);
+        navigate("/login");
+      }, 3000);
     } catch (error) {
       const errorMessage =
         error.response?.data?.message ||

@@ -48,4 +48,34 @@ export class AuthController {
       role: req.user.role,
     });
   });
+
+  static verifyEmail = asyncHandler(async (req: Request, res: Response) => {
+    const { token } = req.query;
+
+    if (!token || typeof token !== "string") {
+      return res.status(400).json({
+        message: "Verification token is required",
+      });
+    }
+
+    const result = await AuthService.verifyEmail(token);
+
+    res.status(200).json(result);
+  });
+
+  static resendVerification = asyncHandler(
+    async (req: Request, res: Response) => {
+      const { email } = req.body;
+
+      if (!email) {
+        return res.status(400).json({
+          message: "Email is required",
+        });
+      }
+
+      const result = await AuthService.resendVerificationEmail(email);
+
+      res.status(200).json(result);
+    },
+  );
 }

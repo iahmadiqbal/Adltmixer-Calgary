@@ -13,6 +13,8 @@ import Chat from "../Pages/Chat";
 import TopToScroll from "../Pages/TopToScroll";
 import PrivacyPolicy from "../Pages/PrivacyPolicy";
 import TermsOfService from "../Pages/TermsOfService";
+import VerifyEmail from "../Pages/VerifyEmail";
+import ResendVerification from "../Pages/ResendVerification";
 import ProtectedRoute from "../components/ProtectedRoute";
 
 const AppRoutes = () => {
@@ -27,6 +29,8 @@ const AppRoutes = () => {
         <Route path="/matches" element={<Matches />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/verify-email" element={<VerifyEmail />} />
+        <Route path="/resend-verification" element={<ResendVerification />} />
         <Route
           path="/profile"
           element={

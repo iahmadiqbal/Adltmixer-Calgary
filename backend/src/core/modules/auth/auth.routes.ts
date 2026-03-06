@@ -7,6 +7,10 @@ const router = Router();
 router.post("/register", AuthController.register);
 router.post("/login", AuthController.login);
 
+// Email verification
+router.get("/verify-email", AuthController.verifyEmail);
+router.post("/resend-verification", AuthController.resendVerification);
+
 // Protected route
 router.get("/me", authenticate, AuthController.me);
 
