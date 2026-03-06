@@ -281,29 +281,9 @@ const Login = () => {
 
       const message =
         err.response?.data?.message || "Invalid email or password";
-      const statusCode = err.response?.status;
 
       setError(message);
-
-      // Special handling for unverified email (403)
-      if (statusCode === 403) {
-        toast.error(message, {
-          duration: 5000,
-          icon: "📧",
-        });
-
-        // Show option to resend verification
-        setTimeout(() => {
-          const shouldResend = window.confirm(
-            "Would you like to resend the verification email?",
-          );
-          if (shouldResend) {
-            navigate("/resend-verification");
-          }
-        }, 2000);
-      } else {
-        toast.error(message);
-      }
+      toast.error(message);
     } finally {
       setIsLoading(false);
     }

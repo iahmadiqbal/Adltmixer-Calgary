@@ -30,7 +30,8 @@ export class AuthService {
 
     const hashedPassword = await bcrypt.hash(data.password, 12);
 
-    // Create user with emailVerified: false
+    // Create user with emailVerified: true (temporarily disabled verification)
+    // TODO: Change to false when domain is verified on Resend
     const user = await prisma.user.create({
       data: {
         email: data.email,
@@ -41,33 +42,34 @@ export class AuthService {
         birthDate: new Date(data.birthDate),
         gender: data.gender,
         preference: data.preference,
-        emailVerified: false,
+        emailVerified: true, // Temporarily true - change to false after domain verification
       },
     });
 
-    // Generate verification token
+    // Generate verification token (kept for future use)
     const verificationToken = crypto.randomBytes(32).toString("hex");
     const expiresAt = new Date();
     expiresAt.setHours(expiresAt.getHours() + 24); // 24 hours from now
 
-    // Save token to database
-    await prisma.emailVerificationToken.create({
-      data: {
-        userId: user.id,
-        token: verificationToken,
-        expiresAt,
-      },
-    });
+    // Save token to database (kept for future use)
+    // TODO: Uncomment when email verification is re-enabled
+    // await prisma.emailVerificationToken.create({
+    //   data: {
+    //     userId: user.id,
+    //     token: verificationToken,
+    //     expiresAt,
+    //   },
+    // });
 
-    // Send verification email (non-blocking - fire and forget)
-    EmailService.sendVerificationEmail(
-      user.email,
-      user.firstName,
-      verificationToken,
-    ).catch((error) => {
-      console.error("Failed to send verification email:", error);
-      // Error is logged but doesn't block the response
-    });
+    // Email sending temporarily disabled
+    // TODO: Re-enable after domain verification on Resend
+    // EmailService.sendVerificationEmail(
+    //   user.email,
+    //   user.firstName,
+    //   verificationToken,
+    // ).catch((error) => {
+    //   console.error("Failed to send verification email:", error);
+    // });
 
     const token = jwt.sign(
       { userId: user.id, role: user.role },
@@ -92,8 +94,7 @@ export class AuthService {
         createdAt: user.createdAt,
       },
       token,
-      message:
-        "Registration successful! Please check your email to verify your account.",
+      message: "Registration successful! You can now login.", // Temporarily changed
     };
   }
 
@@ -112,13 +113,14 @@ export class AuthService {
       throw new AppError("Invalid credentials", 401);
     }
 
-    // Check if email is verified
-    if (!user.emailVerified) {
-      throw new AppError(
-        "Please verify your email before logging in. Check your inbox for the verification link.",
-        403,
-      );
-    }
+    // Email verification check temporarily disabled
+    // TODO: Re-enable after domain verification on Resend
+    // if (!user.emailVerified) {
+    //   throw new AppError(
+    //     "Please verify your email before logging in. Check your inbox for the verification link.",
+    //     403,
+    //   );
+    // }
 
     const token = jwt.sign(
       { userId: user.id, role: user.role },
