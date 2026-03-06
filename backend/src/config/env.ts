@@ -10,9 +10,11 @@ if (!process.env.DATABASE_URL) {
   throw new Error("DATABASE_URL is not defined in .env");
 }
 
-// Only require RESEND_API_KEY in production
-if (process.env.NODE_ENV === "production" && !process.env.RESEND_API_KEY) {
-  throw new Error("RESEND_API_KEY is not defined in .env");
+// Warn if RESEND_API_KEY is missing but don't crash
+if (!process.env.RESEND_API_KEY) {
+  console.warn(
+    "⚠️  RESEND_API_KEY is not set - Email verification will not work!",
+  );
 }
 
 export const env = {
