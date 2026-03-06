@@ -11,7 +11,7 @@ export class AuthController {
     if (!parsed.success) {
       return res.status(400).json({
         message: "Validation failed",
-        errors: parsed.error.errors,
+        errors: parsed.error.issues,
       });
     }
 
@@ -26,7 +26,7 @@ export class AuthController {
     if (!parsed.success) {
       return res.status(400).json({
         message: "Validation failed",
-        errors: parsed.error.errors,
+        errors: parsed.error.issues,
       });
     }
 
