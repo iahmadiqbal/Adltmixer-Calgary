@@ -1,7 +1,8 @@
 import { Resend } from "resend";
 import { env } from "../../config/env";
 
-const resend = new Resend(env.RESEND_API_KEY);
+// Initialize Resend only if API key exists
+const resend = env.RESEND_API_KEY ? new Resend(env.RESEND_API_KEY) : null;
 
 export class EmailService {
   static async sendVerificationEmail(
@@ -9,6 +10,15 @@ export class EmailService {
     firstName: string,
     token: string,
   ) {
+    // Skip email sending if no API key (development mode)
+    if (!env.RESEND_API_KEY || !resend) {
+      console.log("⚠️  RESEND_API_KEY not set - Skipping email send");
+      console.log(
+        `📧 Verification link: ${env.FRONTEND_URL}/verify-email?token=${token}`,
+      );
+      return { id: "dev-mode-skip" };
+    }
+
     const verificationUrl = `${env.FRONTEND_URL}/verify-email?token=${token}`;
 
     try {

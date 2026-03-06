@@ -59,17 +59,15 @@ export class AuthService {
       },
     });
 
-    // Send verification email
-    try {
-      await EmailService.sendVerificationEmail(
-        user.email,
-        user.firstName,
-        verificationToken,
-      );
-    } catch (error) {
+    // Send verification email (non-blocking - fire and forget)
+    EmailService.sendVerificationEmail(
+      user.email,
+      user.firstName,
+      verificationToken,
+    ).catch((error) => {
       console.error("Failed to send verification email:", error);
-      // Don't throw error - user is created, they can resend later
-    }
+      // Error is logged but doesn't block the response
+    });
 
     const token = jwt.sign(
       { userId: user.id, role: user.role },
@@ -223,12 +221,15 @@ export class AuthService {
       },
     });
 
-    // Send verification email
-    await EmailService.sendVerificationEmail(
+    // Send verification email (non-blocking - fire and forget)
+    EmailService.sendVerificationEmail(
       user.email,
       user.firstName,
       verificationToken,
-    );
+    ).catch((error) => {
+      console.error("Failed to send verification email:", error);
+      // Error is logged but doesn't block the response
+    });
 
     return {
       message: "Verification email sent! Please check your inbox.",

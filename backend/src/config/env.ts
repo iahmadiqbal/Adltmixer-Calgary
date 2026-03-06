@@ -10,7 +10,8 @@ if (!process.env.DATABASE_URL) {
   throw new Error("DATABASE_URL is not defined in .env");
 }
 
-if (!process.env.RESEND_API_KEY) {
+// Only require RESEND_API_KEY in production
+if (process.env.NODE_ENV === "production" && !process.env.RESEND_API_KEY) {
   throw new Error("RESEND_API_KEY is not defined in .env");
 }
 
@@ -21,5 +22,5 @@ export const env = {
   JWT_EXPIRES_IN: process.env.JWT_EXPIRES_IN || "7d",
   FRONTEND_URL: process.env.FRONTEND_URL || "",
   NODE_ENV: process.env.NODE_ENV || "development",
-  RESEND_API_KEY: process.env.RESEND_API_KEY as string,
+  RESEND_API_KEY: process.env.RESEND_API_KEY || "",
 };
