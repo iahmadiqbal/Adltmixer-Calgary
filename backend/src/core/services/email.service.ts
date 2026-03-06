@@ -121,6 +121,18 @@ export class EmailService {
 
       if (error) {
         console.error("Resend email error:", error);
+
+        // Special handling for domain verification error
+        if (
+          error.statusCode === 403 &&
+          error.message?.includes("verify a domain")
+        ) {
+          throw new Error(
+            `Resend requires domain verification. You can only send to ${email} if it matches your Resend account email. ` +
+              `To send to any email, verify a domain at resend.com/domains`,
+          );
+        }
+
         throw new Error(`Failed to send verification email: ${error.message}`);
       }
 
